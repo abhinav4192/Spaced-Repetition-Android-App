@@ -97,7 +97,7 @@ public final class DatabaseContract {
                 TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL" + COMMA_SEP +
                 NAME + " TEXT NOT NULL" + COMMA_SEP +
-                TIME + " INTEGER NOT NULL" +
+                TIME + " TEXT NOT NULL" +
                 " )";
 
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;

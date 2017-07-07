@@ -16,6 +16,12 @@ import fightingpit.spacedrepetition.Model.TaskDetail;
  */
 public final class DatabaseMethods extends DatabaseHelper{
 
+    /**
+     * Add a repetitionPattern in DB.
+     * @param iRepetitionPattern repetitionPattern to Add.
+     * @return true if successfully added. False Otherwise.
+     */
+
     public boolean addRepetitionPattern(RepetitionPattern iRepetitionPattern){
 
         boolean aReturnValue = false;
@@ -34,6 +40,10 @@ public final class DatabaseMethods extends DatabaseHelper{
         return aReturnValue;
     }
 
+    /**
+     * Get all RepetitionPatterns from DB.
+     * @return ArrayList of RepetitionPatterns
+     */
     public ArrayList<RepetitionPattern> getAllRepetitionPattern()
     {
         ArrayList<RepetitionPattern> aRepetitionPatterns = new ArrayList<>();
@@ -58,6 +68,11 @@ public final class DatabaseMethods extends DatabaseHelper{
         return aRepetitionPatterns;
     }
 
+    /**
+     * Add repetition space for a repetition pattern.
+     * @param iRepetitionPatternSpace Repetition space to add
+     * @return true if successfully added. False Otherwise.
+     */
     public boolean addRepetitionPatternSpace(RepetitionPatternSpace iRepetitionPatternSpace){
 
         boolean aReturnValue = false;
@@ -78,6 +93,12 @@ public final class DatabaseMethods extends DatabaseHelper{
         return aReturnValue;
     }
 
+    /**
+     * Get All repetition spaces for patterns in DB.
+     * @param iId If null, get All repetition spaces for All patterns in DB.
+     *            If not null,  get All repetition spaces for pattern ID iId.
+     * @return ArrayList of Repetition Spaces
+     */
     public ArrayList<RepetitionPatternSpace> getRepetitionPatternSpace(String iId){
 
         ArrayList<RepetitionPatternSpace> aRepetitionPatternSpaces = new ArrayList<>();
@@ -107,6 +128,11 @@ public final class DatabaseMethods extends DatabaseHelper{
         return aRepetitionPatternSpaces;
     }
 
+    /**
+     * Add Task Details in DB
+     * @param iTaskDetail Task Details to be added
+     * @return true if successfully added. False Otherwise.
+     */
     public boolean addTaskDetail(TaskDetail iTaskDetail)
     {
         boolean aReturnValue = false;
@@ -127,7 +153,12 @@ public final class DatabaseMethods extends DatabaseHelper{
         return aReturnValue;
     }
 
-    public boolean addScheduledTask(Task iTask)
+    /**
+     * Schedule a Task
+     * @param iTask task to be scheduled
+     * @return true if successfully added. False Otherwise.
+     */
+    public boolean addScheduledTask(TaskDetail iTask)
     {
         boolean aReturnValue = false;
         SQLiteDatabase aWritableDatabase = getWritableDatabase();
@@ -143,5 +174,94 @@ public final class DatabaseMethods extends DatabaseHelper{
         if(aRowID != -1)
             aReturnValue = true;
         return aReturnValue;
+    }
+
+    /**
+     * Get Task Details from DB.
+     * @param iTaskId If not null, get Task Details for iTaskId. If null, get task details for all
+     *                tasks.
+     * @return ArrayList of Task Details.
+     */
+    public ArrayList<TaskDetail> getTasks(String iTaskId)
+    {
+        ArrayList<TaskDetail> aTaskDetails = new ArrayList<>();
+        SQLiteDatabase aReadableDatabase = getReadableDatabase();
+
+        String aSelection = null;
+        String[] aSelectionArgs = null;
+
+        if(iTaskId != null){
+            aSelection = DatabaseContract.TaskDetails.ID + "=?";
+            aSelectionArgs = new String[]{iTaskId};
+        }
+        Cursor aCursor = aReadableDatabase.query(DatabaseContract.TaskDetails.TABLE_NAME,
+                null, aSelection, aSelectionArgs, null, null, null);
+        aCursor.moveToFirst();
+        while(!aCursor.isAfterLast()){
+            TaskDetail aTaskDetail = new TaskDetail();
+            aTaskDetail.setTime(null);
+            aTaskDetail.setId(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .TaskDetails.ID)));
+            aTaskDetail.setName(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .TaskDetails.NAME)));
+            aTaskDetail.setComment(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .TaskDetails.COMMENT)));
+            aTaskDetail.setPatternID(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .TaskDetails.PATTERN_ID)));
+            aTaskDetail.setCurrentRepetition(aCursor.getInt(aCursor.getColumnIndexOrThrow
+                    (DatabaseContract.TaskDetails.CURRENT_REPETITION)));
+            aTaskDetails.add(aTaskDetail);
+            aCursor.moveToNext();
+        }
+        aCursor.close();
+        aReadableDatabase.close();
+
+        return aTaskDetails;
+    }
+
+    /**
+     * Get tasks schedule between provided time.
+     * @param iAfterTime If not null, only show tasks after iAfterTime
+     * @param iBeforeTime If not null, only show tasks before iBeforeTime
+     * @return ArrayList for tasks found between given time.
+     */
+    public ArrayList<Task> getScheduledTasks(String iAfterTime, String iBeforeTime)
+    {
+        ArrayList<Task> aTasks = new ArrayList<>();
+        SQLiteDatabase aReadableDatabase = getReadableDatabase();
+
+        String aSelection = null;
+        String[] aSelectionArgs = null;
+        if(iAfterTime != null && iBeforeTime != null)
+        {
+            aSelection = DatabaseContract.ScheduledTasks.TIME + ">=? AND " +
+                    DatabaseContract.ScheduledTasks.TIME + "<?";
+            aSelectionArgs = new String[]{iAfterTime,iBeforeTime};
+        }else if(iAfterTime != null){
+            aSelection = DatabaseContract.ScheduledTasks.TIME + ">=?";
+            aSelectionArgs = new String[]{iAfterTime};
+        }else if(iBeforeTime != null){
+            aSelection = DatabaseContract.ScheduledTasks.TIME + "<?";
+            aSelectionArgs = new String[]{iBeforeTime};
+        }
+        Cursor aCursor = aReadableDatabase.query(DatabaseContract.ScheduledTasks.TABLE_NAME,
+                    null, aSelection, aSelectionArgs, null, null, null);
+        aCursor.moveToFirst();
+        while(!aCursor.isAfterLast()){
+            Task aTask = new Task();
+            aTask.setId(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .ScheduledTasks.ID)));
+            aTask.setName(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .ScheduledTasks.NAME)));
+            aTask.setTime(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
+                    .ScheduledTasks.TIME)));
+
+            aTasks.add(aTask);
+            aCursor.moveToNext();
+        }
+        aCursor.close();
+        aReadableDatabase.close();
+
+        return aTasks;
     }
 }

@@ -11,11 +11,11 @@ public class TaskDetail extends Task {
     public TaskDetail() {
     }
 
-    public TaskDetail(String id, String name, Integer time) {
+    public TaskDetail(String id, String name, String time) {
         super(id, name, time);
     }
 
-    public TaskDetail(String id, String name, Integer time, String comment, String patternID,
+    public TaskDetail(String id, String name, String time, String comment, String patternID,
                       Integer currentRepetition) {
         super(id, name, time);
         Comment = comment;
@@ -45,5 +45,13 @@ public class TaskDetail extends Task {
 
     public void setCurrentRepetition(Integer currentRepetition) {
         CurrentRepetition = currentRepetition;
+    }
+
+    @Override
+    public String toString() {
+        String aReturnValue = super.toString();
+        aReturnValue += " Comment:" + Comment + " PatternId:" + PatternID + " CurrRep:" +
+                CurrentRepetition;
+        return aReturnValue;
     }
 }

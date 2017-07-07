@@ -6,12 +6,12 @@ package fightingpit.spacedrepetition.Model;
 public class Task {
     private String Id;
     private String Name;
-    private Integer Time;
+    private String Time;
 
     public Task() {
     }
 
-    public Task(String id, String name, Integer time) {
+    public Task(String id, String name, String time) {
         Id = id;
         Name = name;
         Time = time;
@@ -33,11 +33,18 @@ public class Task {
         Name = name;
     }
 
-    public Integer getTime() {
+    public String getTime() {
         return Time;
     }
 
-    public void setTime(Integer time) {
+    public void setTime(String time) {
         Time = time;
+    }
+
+    @Override
+    public String toString() {
+        String aReturnValue = "";
+        aReturnValue += "Id:" + Id + " Name:" + Name + " Time:" + Time;
+        return aReturnValue;
     }
 }
