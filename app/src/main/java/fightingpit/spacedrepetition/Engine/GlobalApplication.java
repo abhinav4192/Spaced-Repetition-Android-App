@@ -13,17 +13,11 @@ public class GlobalApplication extends Application {
     public void init()
     {
         mDatabaseMethods = new DatabaseMethods();
-        mDatabaseMethods.updateWordList();
-        mTextToSpeechManager = new TextToSpeechManager();
-        mTextToSpeechManager.init();
     }
 
     public DatabaseMethods getDatabaseMethods() {
         return mDatabaseMethods;
     }
 
-    public TextToSpeechManager getTextToSpeechManager() {
-        return mTextToSpeechManager;
-    }
 
 }
