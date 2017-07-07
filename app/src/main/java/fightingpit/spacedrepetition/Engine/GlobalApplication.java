@@ -5,7 +5,8 @@ import android.app.Application;
 import fightingpit.spacedrepetition.Engine.Database.DatabaseMethods;
 
 /**
- * Created by abhinavgarg on 07/07/17.
+ * Initializes resources at application level.
+ * Should be used maintaining resources which are frequently needed and costly to initialize.
  */
 public class GlobalApplication extends Application {
     DatabaseMethods mDatabaseMethods = null;

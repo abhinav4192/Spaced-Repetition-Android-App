@@ -41,4 +41,11 @@ public class RepetitionPattern {
     public void setRepetitions(Integer repetitions) {
         Repetitions = repetitions;
     }
+
+    @Override
+    public String toString() {
+        String aReturnString = "";
+        aReturnString += "Id:" + Id + " Name:" + Name + " Rep:" + Repetitions;
+        return  aReturnString;
+    }
 }

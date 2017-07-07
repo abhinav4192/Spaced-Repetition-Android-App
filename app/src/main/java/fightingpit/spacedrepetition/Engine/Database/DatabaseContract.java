@@ -3,24 +3,26 @@ package fightingpit.spacedrepetition.Engine.Database;
 import android.provider.BaseColumns;
 
 /**
- * Created by abhinavgarg on 07/07/17.
+ * Database Schema.
  */
 public final class DatabaseContract {
 
     public static final  int    DATABASE_VERSION    = 1;
     public static final  String DATABASE_NAME       = "database.db";
-    private static final String PRIMARY_KEY         = "PRIMARY KEY";
-    private static final String UNIQUE              = "UNIQUE";
     private static final String COMMA_SEP           = ", ";
 
     public static final String[] SQL_CREATE_TABLE_ARRAY = {
             RepetitionPattern.CREATE_TABLE,
             RepetitionPatternSpace.CREATE_TABLE,
+            TaskDetails.CREATE_TABLE,
+            ScheduledTasks.CREATE_TABLE,
     };
 
     public static final String[] SQL_DROP_TABLE_ARRAY = {
             RepetitionPattern.DROP_TABLE,
             RepetitionPatternSpace.DROP_TABLE,
+            TaskDetails.DROP_TABLE,
+            ScheduledTasks.DROP_TABLE,
     };
 
 
@@ -62,4 +64,43 @@ public final class DatabaseContract {
 
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
+
+    public static abstract class TaskDetails implements BaseColumns {
+
+        public static final String TABLE_NAME = "TASK_DETAILS";
+        public static final String ID     = "ID";
+        public static final String NAME = "NAME";
+        public static final String COMMENT   = "COMMENT";
+        public static final String PATTERN_ID   = "PATTERN_ID";
+        public static final String CURRENT_REPETITION  = "CURRENT_REPETITION";
+
+        public static final String CREATE_TABLE = "CREATE TABLE " +
+                TABLE_NAME + " (" +
+                ID + " TEXT PRIMARY KEY NOT NULL" + COMMA_SEP +
+                NAME + " TEXT NOT NULL" + COMMA_SEP +
+                COMMENT + " TEXT " + COMMA_SEP +
+                PATTERN_ID + " TEXT NOT NULL" + COMMA_SEP +
+                CURRENT_REPETITION + " INTEGER" +
+                " )";
+
+        public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    }
+
+    public static abstract class ScheduledTasks implements BaseColumns {
+
+        public static final String TABLE_NAME = "SCHEDULED_TASKS";
+        public static final String ID     = "ID";
+        public static final String NAME = "NAME";
+        public static final String TIME   = "TIME";
+
+        public static final String CREATE_TABLE = "CREATE TABLE " +
+                TABLE_NAME + " (" +
+                ID + " TEXT PRIMARY KEY NOT NULL" + COMMA_SEP +
+                NAME + " TEXT NOT NULL" + COMMA_SEP +
+                TIME + " INTEGER NOT NULL" +
+                " )";
+
+        public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    }
+
 }

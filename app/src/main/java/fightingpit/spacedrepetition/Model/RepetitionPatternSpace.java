@@ -42,4 +42,11 @@ public class RepetitionPatternSpace {
     public void setSpace(Integer space) {
         Space = space;
     }
+
+    @Override
+    public String toString() {
+        String aReturnString = "";
+        aReturnString += "Id:" + Id + " RepetitionNumber:" + RepetitionNumber + " Space:" + Space;
+        return  aReturnString;
+    }
 }

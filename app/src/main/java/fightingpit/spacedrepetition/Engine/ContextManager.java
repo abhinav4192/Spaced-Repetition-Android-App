@@ -3,7 +3,8 @@ package fightingpit.spacedrepetition.Engine;
 import android.content.Context;
 
 /**
- * Created by abhinavgarg on 07/07/17.
+ * Provides easy access to Current Context
+ * All activities should update this context on creation.
  */
 public final class ContextManager {
 
