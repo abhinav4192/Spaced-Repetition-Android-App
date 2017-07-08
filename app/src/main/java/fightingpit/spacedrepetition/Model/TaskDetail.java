@@ -1,11 +1,31 @@
 package fightingpit.spacedrepetition.Model;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.InheritedColumn;
+import com.raizlabs.android.dbflow.annotation.InheritedPrimaryKey;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+
+import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
+
 /**
  * Created by abhinavgarg on 07/07/17.
  */
+
+@Table(database = AppDatabase.class,
+        inheritedPrimaryKeys = {@InheritedPrimaryKey(column = @Column, primaryKey = @PrimaryKey,
+                fieldName = "Id")}, inheritedColumns = {@InheritedColumn(column = @Column,
+        fieldName = "Name"),@InheritedColumn(column = @Column,
+        fieldName = "Time")})
 public class TaskDetail extends Task {
+
+    @Column
     private String Comment;
+
+    @Column
     private String PatternID;
+
+    @Column
     private Integer CurrentRepetition;
 
     public TaskDetail() {

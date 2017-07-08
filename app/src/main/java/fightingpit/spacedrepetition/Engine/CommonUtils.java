@@ -2,10 +2,14 @@ package fightingpit.spacedrepetition.Engine;
 
 import android.util.Log;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import fightingpit.spacedrepetition.Engine.Database.DatabaseMethods;
+import fightingpit.spacedrepetition.Model.RepetitionPattern;
+
+//import fightingpit.spacedrepetition.Engine.Database.DatabaseMethods;
 
 /**
  * Utility class containing common methods.
@@ -82,25 +86,22 @@ public class CommonUtils {
      * Testing method.
      */
     public static void testImplementation() {
-                ArrayList<Integer> p = new ArrayList<>();
-                p.add(1);
-                p.add(3);
-                p.add(5);
-                StorageUtils.addRepetitionPattern("Default", p);
-
-                ArrayList<Integer> q = new ArrayList<>();
-                q.add(5);
-                q.add(10);
-                q.add(12);
-                q.add(18);
-                StorageUtils.addRepetitionPattern("Random", q);
-        StorageUtils.printPatterns();
-
-                DatabaseMethods dbm = ((GlobalApplication) ContextManager
-         .getCurrentActivityContext()
-                        .getApplicationContext())
-                        .getDatabaseMethods();
-                StorageUtils.addTask("Task 2", null, dbm.getAllRepetitionPattern().get(0).getId());
+//        ArrayList<Integer> p = new ArrayList<>();
+//        p.add(1);
+//        p.add(3);
+//        p.add(5);
+//        StorageUtils.addRepetitionPattern("Default", p);
+//
+//        ArrayList<Integer> q = new ArrayList<>();
+//        q.add(5);
+//        q.add(10);
+//        q.add(12);
+//        q.add(18);
+//        StorageUtils.addRepetitionPattern("Random", q);
+//        StorageUtils.printPatterns();
+//
+        StorageUtils.addTask("Sangita", null, SQLite.select().from(RepetitionPattern
+                .class).queryList().get(1).getId());
         StorageUtils.printTasks();
         StorageUtils.printScheduledTasks();
     }

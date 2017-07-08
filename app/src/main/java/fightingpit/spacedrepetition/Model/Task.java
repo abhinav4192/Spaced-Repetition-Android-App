@@ -1,11 +1,24 @@
 package fightingpit.spacedrepetition.Model;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
+import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
+
 /**
  * Created by abhinavgarg on 07/07/17.
  */
-public class Task {
+@Table(database = AppDatabase.class)
+public class Task extends BaseModel{
+    @PrimaryKey
     private String Id;
+
+    @Column
     private String Name;
+
+    @Column
     private String Time;
 
     public Task() {
