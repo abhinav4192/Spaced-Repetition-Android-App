@@ -1,328 +1,221 @@
-//package fightingpit.spacedrepetition.Engine.Database;
-//
-//import android.content.ContentValues;
-//import android.database.Cursor;
-//import android.database.sqlite.SQLiteDatabase;
-//import android.support.annotation.NonNull;
-//import android.support.annotation.Nullable;
-//
-//import java.util.ArrayList;
-//
-//import fightingpit.spacedrepetition.Model.RepetitionPattern;
-//import fightingpit.spacedrepetition.Model.RepetitionPatternSpace;
-//import fightingpit.spacedrepetition.Model.Task;
-//import fightingpit.spacedrepetition.Model.TaskDetail;
-//
-///**
-// * Contains implementation of methods which read/write/update Database.
-// */
-//public final class DatabaseMethods extends DatabaseHelper {
-//
-//    /**
-//     * Add a repetitionPattern in DB.
-//     *
-//     * @param iRepetitionPattern repetitionPattern to Add.
-//     * @return true if successfully added. False Otherwise.
-//     */
-//
-//    public boolean addRepetitionPattern(RepetitionPattern iRepetitionPattern) {
-//
-//        boolean aReturnValue = false;
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//
-//        ContentValues aContentValues = new ContentValues();
-//        aContentValues.put(DatabaseContract.RepetitionPattern.ID, iRepetitionPattern.getId());
-//        aContentValues.put(DatabaseContract.RepetitionPattern.NAME, iRepetitionPattern.getName());
-//        aContentValues.put(DatabaseContract.RepetitionPattern.REPETITIONS, iRepetitionPattern
-//                .getRepetitions());
-//
-//        long aRowID = aWritableDatabase.insert(DatabaseContract.RepetitionPattern.TABLE_NAME, null,
-//                aContentValues);
-//        aWritableDatabase.close();
-//        if (aRowID != -1)
-//            aReturnValue = true;
-//        return aReturnValue;
-//    }
-//
-//    /**
-//     * Get all RepetitionPatterns from DB.
-//     *
-//     * @return ArrayList of RepetitionPatterns
-//     */
-//    public ArrayList<RepetitionPattern> getAllRepetitionPattern() {
-//        ArrayList<RepetitionPattern> aRepetitionPatterns = new ArrayList<>();
-//        SQLiteDatabase aReadableDatabase = getReadableDatabase();
-//        Cursor aCursor = aReadableDatabase.query(DatabaseContract.RepetitionPattern.TABLE_NAME,
-//                null, null, null, null, null, null);
-//        aCursor.moveToFirst();
-//        while (!aCursor.isAfterLast()) {
-//            RepetitionPattern aCurrentPattern = new RepetitionPattern();
-//            aCurrentPattern.setId(aCursor.getString(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPattern.ID)));
-//            aCurrentPattern.setName(aCursor.getString(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPattern.NAME)));
-//            aCurrentPattern.setRepetitions(aCursor.getInt(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPattern.REPETITIONS)));
-//            aRepetitionPatterns.add(aCurrentPattern);
-//            aCursor.moveToNext();
-//        }
-//        aCursor.close();
-//        aReadableDatabase.close();
-//
-//        return aRepetitionPatterns;
-//    }
-//
-//    /**
-//     * Add repetition space for a repetition pattern.
-//     *
-//     * @param iRepetitionPatternSpace Repetition space to add
-//     * @return true if successfully added. False Otherwise.
-//     */
-//    public boolean addRepetitionPatternSpace(RepetitionPatternSpace iRepetitionPatternSpace) {
-//
-//        boolean aReturnValue = false;
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//
-//        ContentValues aContentValues = new ContentValues();
-//        aContentValues.put(DatabaseContract.RepetitionPatternSpace.ID, iRepetitionPatternSpace
-//                .getId());
-//        aContentValues.put(DatabaseContract.RepetitionPatternSpace.REPETITION_NUMBER,
-//                iRepetitionPatternSpace.getRepetitionNumber());
-//        aContentValues.put(DatabaseContract.RepetitionPatternSpace.SPACE, iRepetitionPatternSpace
-//                .getSpace());
-//
-//        long aRowID = aWritableDatabase.insert(DatabaseContract.RepetitionPatternSpace
-//                        .TABLE_NAME, null,
-//                aContentValues);
-//        aWritableDatabase.close();
-//        if (aRowID != -1)
-//            aReturnValue = true;
-//        return aReturnValue;
-//    }
-//
-//    /**
-//     * Get All repetition spaces for patterns in DB.
-//     *
-//     * @param iId If null, get All repetition spaces for All patterns in DB.
-//     *            If not null,  get All repetition spaces for pattern ID iId.
-//     * @return ArrayList of Repetition Spaces
-//     */
-//    public ArrayList<RepetitionPatternSpace> getRepetitionPatternSpace(String iId) {
-//
-//        ArrayList<RepetitionPatternSpace> aRepetitionPatternSpaces = new ArrayList<>();
-//        SQLiteDatabase aReadableDatabase = getReadableDatabase();
-//
-//        String aSelection = DatabaseContract.RepetitionPatternSpace.ID + "=?";
-//        String[] aSelectionArgs = {iId};
-//
-//        Cursor aCursor = aReadableDatabase.query(DatabaseContract.RepetitionPatternSpace.TABLE_NAME,
-//                null, aSelection, aSelectionArgs, null, null, DatabaseContract
-//                        .RepetitionPatternSpace.REPETITION_NUMBER);
-//        aCursor.moveToFirst();
-//        while (!aCursor.isAfterLast()) {
-//            RepetitionPatternSpace aCurrentPatternSpace = new RepetitionPatternSpace();
-//            aCurrentPatternSpace.setId(aCursor.getString(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPatternSpace.ID)));
-//            aCurrentPatternSpace.setRepetitionNumber(aCursor.getInt(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPatternSpace.REPETITION_NUMBER)));
-//            aCurrentPatternSpace.setSpace(aCursor.getInt(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.RepetitionPatternSpace.SPACE)));
-//            aRepetitionPatternSpaces.add(aCurrentPatternSpace);
-//            aCursor.moveToNext();
-//        }
-//        aCursor.close();
-//        aReadableDatabase.close();
-//
-//        return aRepetitionPatternSpaces;
-//    }
-//
-//    /**
-//     * Add Task Details in DB
-//     *
-//     * @param iTaskDetail Task Details to be added
-//     * @return true if successfully added. False Otherwise.
-//     */
-//    public boolean addTaskDetail(TaskDetail iTaskDetail) {
-//        boolean aReturnValue = false;
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//
-//        ContentValues aContentValues = new ContentValues();
-//        aContentValues.put(DatabaseContract.TaskDetails.ID, iTaskDetail.getId());
-//        aContentValues.put(DatabaseContract.TaskDetails.NAME, iTaskDetail.getName());
-//        aContentValues.put(DatabaseContract.TaskDetails.COMMENT, iTaskDetail.getComment());
-//        aContentValues.put(DatabaseContract.TaskDetails.PATTERN_ID, iTaskDetail.getPatternID());
-//        aContentValues.put(DatabaseContract.TaskDetails.CURRENT_REPETITION, iTaskDetail
-//                .getCurrentRepetition());
-//
-//        long aRowID = aWritableDatabase.insert(DatabaseContract.TaskDetails.TABLE_NAME, null,
-//                aContentValues);
-//        aWritableDatabase.close();
-//        if (aRowID != -1)
-//            aReturnValue = true;
-//        return aReturnValue;
-//    }
-//
-//    /**
-//     * Schedule a Task
-//     *
-//     * @param iTask task to be scheduled
-//     * @return true if successfully added. False Otherwise.
-//     */
-//    public boolean addScheduledTask(TaskDetail iTask) {
-//        boolean aReturnValue = false;
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//
-//        ContentValues aContentValues = new ContentValues();
-//        aContentValues.put(DatabaseContract.ScheduledTasks.ID, iTask.getId());
-//        aContentValues.put(DatabaseContract.ScheduledTasks.NAME, iTask.getName());
-//        aContentValues.put(DatabaseContract.ScheduledTasks.TIME, iTask.getTime());
-//
-//        long aRowID = aWritableDatabase.insert(DatabaseContract.ScheduledTasks.TABLE_NAME, null,
-//                aContentValues);
-//        aWritableDatabase.close();
-//        if (aRowID != -1)
-//            aReturnValue = true;
-//        return aReturnValue;
-//    }
-//
-//    /**
-//     * Get Task Details from DB.
-//     *
-//     * @param iTaskId If not null, get Task Details for iTaskId. If null, get task details for all
-//     *                tasks.
-//     * @return ArrayList of Task Details.
-//     */
-//    public ArrayList<TaskDetail> getTasks(String iTaskId) {
-//        ArrayList<TaskDetail> aTaskDetails = new ArrayList<>();
-//        SQLiteDatabase aReadableDatabase = getReadableDatabase();
-//
-//        String aSelection = null;
-//        String[] aSelectionArgs = null;
-//
-//        if (iTaskId != null) {
-//            aSelection = DatabaseContract.TaskDetails.ID + "=?";
-//            aSelectionArgs = new String[]{iTaskId};
-//        }
-//        Cursor aCursor = aReadableDatabase.query(DatabaseContract.TaskDetails.TABLE_NAME,
-//                null, aSelection, aSelectionArgs, null, null, null);
-//        aCursor.moveToFirst();
-//        while (!aCursor.isAfterLast()) {
-//            TaskDetail aTaskDetail = new TaskDetail();
-//            aTaskDetail.setTime(null);
-//            aTaskDetail.setId(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .TaskDetails.ID)));
-//            aTaskDetail.setName(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .TaskDetails.NAME)));
-//            aTaskDetail.setComment(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .TaskDetails.COMMENT)));
-//            aTaskDetail.setPatternID(aCursor.getString(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract
-//                            .TaskDetails.PATTERN_ID)));
-//            aTaskDetail.setCurrentRepetition(aCursor.getInt(aCursor.getColumnIndexOrThrow
-//                    (DatabaseContract.TaskDetails.CURRENT_REPETITION)));
-//            aTaskDetails.add(aTaskDetail);
-//            aCursor.moveToNext();
-//        }
-//        aCursor.close();
-//        aReadableDatabase.close();
-//
-//        return aTaskDetails;
-//    }
-//
-//    /**
-//     * Get tasks schedule between provided time.
-//     *
-//     * @param iAfterTime  If not null, only show tasks after iAfterTime
-//     * @param iBeforeTime If not null, only show tasks before iBeforeTime
-//     * @return ArrayList for tasks found between given time.
-//     */
-//    public ArrayList<Task> getScheduledTasks(String iAfterTime, String iBeforeTime) {
-//        ArrayList<Task> aTasks = new ArrayList<>();
-//        SQLiteDatabase aReadableDatabase = getReadableDatabase();
-//
-//        String aSelection = null;
-//        String[] aSelectionArgs = null;
-//        if (iAfterTime != null && iBeforeTime != null) {
-//            aSelection = DatabaseContract.ScheduledTasks.TIME + ">=? AND " +
-//                    DatabaseContract.ScheduledTasks.TIME + "<?";
-//            aSelectionArgs = new String[]{iAfterTime, iBeforeTime};
-//        } else if (iAfterTime != null) {
-//            aSelection = DatabaseContract.ScheduledTasks.TIME + ">=?";
-//            aSelectionArgs = new String[]{iAfterTime};
-//        } else if (iBeforeTime != null) {
-//            aSelection = DatabaseContract.ScheduledTasks.TIME + "<?";
-//            aSelectionArgs = new String[]{iBeforeTime};
-//        }
-//        Cursor aCursor = aReadableDatabase.query(DatabaseContract.ScheduledTasks.TABLE_NAME,
-//                null, aSelection, aSelectionArgs, null, null, null);
-//        aCursor.moveToFirst();
-//        while (!aCursor.isAfterLast()) {
-//            Task aTask = new Task();
-//            aTask.setId(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .ScheduledTasks.ID)));
-//            aTask.setName(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .ScheduledTasks.NAME)));
-//            aTask.setTime(aCursor.getString(aCursor.getColumnIndexOrThrow(DatabaseContract
-//                    .ScheduledTasks.TIME)));
-//
-//            aTasks.add(aTask);
-//            aCursor.moveToNext();
-//        }
-//        aCursor.close();
-//        aReadableDatabase.close();
-//
-//        return aTasks;
-//    }
-//
-//
-//    /**
-//     * Update Scheduled task time
-//     *
-//     * @param iTakskId Id of task to be updated
-//     * @param iNewTime update to this time
-//     */
-//    public void updateScheduledTime(String iTakskId, String iNewTime) {
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//
-//        ContentValues aContentValues = new ContentValues();
-//        aContentValues.put(DatabaseContract.ScheduledTasks.TIME, iNewTime);
-//
-//        String aSelection = DatabaseContract.ScheduledTasks.ID + "=?";
-//        String[] aSelectionArgs = {iTakskId};
-//        aWritableDatabase.update(DatabaseContract.ScheduledTasks.TABLE_NAME, aContentValues,
-//                aSelection, aSelectionArgs);
-//        aWritableDatabase.close();
-//    }
-//
-//    /**
-//     * Update Task Details
-//     *
-//     * @param iTakskId            Id of task to be update
-//     * @param iName               New Task name. Null if no update required.
-//     * @param iComment            New Comment. Null if no update required.
-//     * @param iToUpdateRepetition true if repetition update is required.
-//     * @param iRepetition         If iToUpdateRepetition is true, update current repetition to
-//     *                            iRepetition(can ube updated to null)
-//     */
-//    public void updateTask(@NonNull String iTakskId, @Nullable String iName, @Nullable String
-//            iComment, @NonNull boolean iToUpdateRepetition, @Nullable Integer iRepetition) {
-//
-//        SQLiteDatabase aWritableDatabase = getWritableDatabase();
-//        ContentValues aContentValues = new ContentValues();
-//        String aSelection = DatabaseContract.TaskDetails.ID + "=?";
-//        String[] aSelectionArgs = {iTakskId};
-//
-//        if (iName != null) {
-//            aContentValues.put(DatabaseContract.TaskDetails.NAME, iName);
-//        }
-//        if (iComment != null) {
-//            aContentValues.put(DatabaseContract.TaskDetails.COMMENT, iComment);
-//        }
-//        if (iToUpdateRepetition) {
-//            aContentValues.put(DatabaseContract.TaskDetails.CURRENT_REPETITION, iRepetition);
-//        }
-//        aWritableDatabase.update(DatabaseContract.TaskDetails.TABLE_NAME, aContentValues,
-//                aSelection, aSelectionArgs);
-//        aWritableDatabase.close();
-//    }
-//}
+package fightingpit.spacedrepetition.Engine.Database;
+
+import android.util.Log;
+
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fightingpit.spacedrepetition.Engine.CommonUtils;
+import fightingpit.spacedrepetition.Model.RepetitionPattern;
+import fightingpit.spacedrepetition.Model.RepetitionPatternSpace;
+import fightingpit.spacedrepetition.Model.RepetitionPatternSpace_Table;
+import fightingpit.spacedrepetition.Model.Task;
+import fightingpit.spacedrepetition.Model.TaskDetail;
+import fightingpit.spacedrepetition.Model.TaskDetail_Table;
+import fightingpit.spacedrepetition.Model.Task_Table;
+
+/**
+ * Contains implementation of methods which read/write/update Database.
+ */
+
+public class DatabaseMethods {
+
+    private static final String TAG = DatabaseMethods.class.getSimpleName();
+
+    private DatabaseMethods() {
+    }
+
+    /**
+     * Adds a new repetition pattern in DB.
+     *
+     * @param iName             Name of the new pattern
+     * @param iRepetitionSpaces Arraylist of Spaced Days in pattern. (example: 0,2,9,30,90)
+     * @return true if pattern was added in DB, false otherise.
+     */
+    public static void addRepetitionPattern(String iName, ArrayList<Integer> iRepetitionSpaces) {
+
+        // TODO: Check for name in existing patterns
+        String aPatternId = CommonUtils.generateId();
+
+        RepetitionPattern aRepetitionPattern = new RepetitionPattern(aPatternId, iName,
+                iRepetitionSpaces.size());
+        aRepetitionPattern.save();
+
+        List<RepetitionPatternSpace> aRepetitionPatternSpaceList = new ArrayList<>();
+        for (int i = 1; i <= iRepetitionSpaces.size(); ++i) {
+            Integer aSpaceValue = iRepetitionSpaces.get(i - 1);
+            if (i > 1) {
+                aSpaceValue -= iRepetitionSpaces.get(i - 2);
+            }
+            aRepetitionPatternSpaceList.add(new RepetitionPatternSpace(aPatternId, i, aSpaceValue));
+        }
+        FastStoreModelTransaction<RepetitionPatternSpace> aFastTransaction =
+                FastStoreModelTransaction
+                        .insertBuilder(FlowManager
+                                .getModelAdapter
+                                        (RepetitionPatternSpace.class)).addAll
+                        (aRepetitionPatternSpaceList).build();
+        FlowManager.getDatabase(AppDatabase.class).executeTransaction(aFastTransaction);
+    }
+
+    public static void addTask(String iName, String iComment, String iPatternId) {
+        // TODO: Check for error cases. Like warning for existing name.
+
+        TaskDetail aTaskDetail = new TaskDetail();
+        aTaskDetail.setId(CommonUtils.generateId());
+        aTaskDetail.setName(iName);
+        aTaskDetail.setComment(iComment);
+        aTaskDetail.setPatternID(iPatternId);
+        aTaskDetail.setCurrentRepetition(0);
+        aTaskDetail.save();
+
+        for (RepetitionPatternSpace aRepetitionPatternSpace : SQLite.select().from
+                (RepetitionPatternSpace
+                        .class).where(RepetitionPatternSpace_Table.Id.eq(aTaskDetail.getPatternID
+                ()))
+                .queryList
+                        ()) {
+            if (aRepetitionPatternSpace.getRepetitionNumber() == 1) {
+                aTaskDetail.setTime(CommonUtils.getOffsetTimeInMillis(null, aRepetitionPatternSpace
+                        .getSpace()));
+            }
+        }
+        Task aTask = new Task(aTaskDetail.getId(), aTaskDetail.getName(), aTaskDetail.getTime());
+        aTask.save();
+    }
+
+
+    /**
+     * Get all RepetitionPatterns from DB.
+     *
+     * @return List of RepetitionPatterns
+     */
+    public static List<RepetitionPattern> getAllRepetitionPattern() {
+        return SQLite.select().from(RepetitionPattern.class).queryList();
+    }
+
+    /**
+     * Get All repetition spaces for patterns in DB.
+     *
+     * @param iPatternId get All repetition spaces for pattern ID iPatternId.
+     * @return ArrayList of Repetition Spaces
+     */
+    public static List<RepetitionPatternSpace> getRepetitionPatternSpace(String iPatternId) {
+
+        List<RepetitionPatternSpace> aRepetitionPatternSpaces = SQLite.select().from
+                (RepetitionPatternSpace.class).where(RepetitionPatternSpace_Table.Id
+                .eq(iPatternId)).queryList();
+
+        return aRepetitionPatternSpaces;
+    }
+
+    /**
+     * Get Task Details from DB.
+     *
+     * @param iTaskId If not null, get Task Details for iTaskId. If null, get task details for all
+     *                tasks.
+     * @return ArrayList of Task Details.
+     */
+    public static List<TaskDetail> getTaskDetails(String iTaskId) {
+        List<TaskDetail> aTaskDetails;
+
+        if (iTaskId == null) {
+            aTaskDetails = SQLite.select().from(TaskDetail.class).queryList();
+        } else {
+            aTaskDetails = SQLite.select().from(TaskDetail.class).where(TaskDetail_Table.Id.eq
+                    (iTaskId)).queryList();
+        }
+        return aTaskDetails;
+    }
+
+    /**
+     * Get tasks schedule between provided time.
+     *
+     * @param iAfterTime  If not null, only show tasks after iAfterTime
+     * @param iBeforeTime If not null, only show tasks before iBeforeTime
+     * @return ArrayList for tasks found between given time.
+     */
+    public static List<Task> getScheduledTasks(String iAfterTime, String iBeforeTime) {
+        List<Task> aTasks = new ArrayList<>();
+
+        if (iAfterTime != null && iBeforeTime != null) {
+            aTasks = SQLite.select().from(Task.class).where(Task_Table.Time.greaterThanOrEq
+                    (iAfterTime), Task_Table.Time.lessThan(iBeforeTime)).queryList();
+        } else if (iAfterTime == null && iBeforeTime == null) {
+            aTasks = SQLite.select().from(Task.class).queryList();
+        } else if (iAfterTime != null) {
+            aTasks = SQLite.select().from(Task.class).where(Task_Table.Time.greaterThanOrEq
+                    (iAfterTime)).queryList();
+        } else if (iBeforeTime != null) {
+            aTasks = SQLite.select().from(Task.class).where(Task_Table.Time.lessThan(iBeforeTime)
+            ).queryList();
+        }
+        return aTasks;
+    }
+
+    /**
+     * This will automatically update the record if it has already been saved and there is a
+     * primary key that matches. If primary key does not matches, create the record.
+     *
+     * @param iTask Modified Task to be updated in DB
+     */
+    public static void updateTask(Task iTask) {
+        iTask.save();
+    }
+
+    /**
+     * This will automatically update the record details if it has already been saved and there is a
+     * primary key that matches. If primary key does not matches, create the record.
+     *
+     * @param iTaskDetail
+     */
+    public static void updateTaskDetails(TaskDetail iTaskDetail) {
+        iTaskDetail.save();
+    }
+
+
+    /**
+     * Test Utility to print pattern and pattern spaces present in DB.
+     */
+    public static void printPatterns() {
+
+        List<RepetitionPattern> aRepetitionPatterns = getAllRepetitionPattern();
+        Log.d(TAG, "aRepetitionPatterns Size:" + aRepetitionPatterns.size());
+        for (RepetitionPattern r : aRepetitionPatterns) {
+            Log.d(TAG, "Pattern:" + r.toString());
+            List<RepetitionPatternSpace> aRepetitionPatternSpaces = getRepetitionPatternSpace(r
+                    .getId());
+            Log.d(TAG, "aRepetitionPatternSpaces Size:" + aRepetitionPatternSpaces.size());
+            for (RepetitionPatternSpace rps : aRepetitionPatternSpaces) {
+                Log.d(TAG, "PatternSpace:" + rps.toString());
+            }
+        }
+    }
+
+    /**
+     * Test Utility
+     */
+    public static void printTaskDetails() {
+        for (TaskDetail td : getTaskDetails(null)) {
+            if (td.getComment() == null)
+                Log.d(TAG, "Task Details:" + "Comment is null");
+            Log.d(TAG, "Task Details:" + td.toString());
+        }
+    }
+
+    /**
+     * Test Utility
+     */
+    public static void printScheduledTasks() {
+
+        List<Task> aTasks = getScheduledTasks(null, null);
+        Log.d(TAG, "printScheduledTasks size :" + aTasks.size());
+        for (Task td : aTasks) {
+            Log.d(TAG, "Tasks:" + td.toString());
+        }
+    }
+}
