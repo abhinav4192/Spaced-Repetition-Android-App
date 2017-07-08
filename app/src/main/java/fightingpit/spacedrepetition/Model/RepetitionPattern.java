@@ -3,6 +3,7 @@ package fightingpit.spacedrepetition.Model;
 /**
  * Created by abhinavgarg on 07/07/17.
  */
+
 public class RepetitionPattern {
 
     private String Id;
@@ -11,6 +12,8 @@ public class RepetitionPattern {
 
     public RepetitionPattern() {
     }
+
+
 
     public RepetitionPattern(String id, String name, Integer repetitions) {
         Id = id;

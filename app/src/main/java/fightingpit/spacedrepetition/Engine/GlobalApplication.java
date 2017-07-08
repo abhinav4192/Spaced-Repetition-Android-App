@@ -2,6 +2,9 @@ package fightingpit.spacedrepetition.Engine;
 
 import android.app.Application;
 
+import com.raizlabs.android.dbflow.config.FlowConfig;
+import com.raizlabs.android.dbflow.config.FlowManager;
+
 import fightingpit.spacedrepetition.Engine.Database.DatabaseMethods;
 
 /**
