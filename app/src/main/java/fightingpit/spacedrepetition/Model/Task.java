@@ -11,7 +11,7 @@ import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
  * Created by abhinavgarg on 07/07/17.
  */
 @Table(database = AppDatabase.class)
-public class Task extends BaseModel{
+public class Task extends BaseModel {
     @PrimaryKey
     private String Id;
 

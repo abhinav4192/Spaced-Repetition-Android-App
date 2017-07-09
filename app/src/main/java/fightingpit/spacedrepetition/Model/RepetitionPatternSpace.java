@@ -12,7 +12,7 @@ import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
  */
 
 @Table(database = AppDatabase.class)
-public class RepetitionPatternSpace extends BaseModel{
+public class RepetitionPatternSpace extends BaseModel {
 
     @PrimaryKey
     private String Id;
@@ -61,6 +61,6 @@ public class RepetitionPatternSpace extends BaseModel{
     public String toString() {
         String aReturnString = "";
         aReturnString += "Id:" + Id + " RepetitionNumber:" + RepetitionNumber + " Space:" + Space;
-        return  aReturnString;
+        return aReturnString;
     }
 }

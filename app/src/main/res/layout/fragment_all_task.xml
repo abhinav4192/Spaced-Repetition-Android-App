@@ -1,0 +1,39 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="fightingpit.spacedrepetition.AllTaskFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_fat"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <!--<TextView-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/tv_ftw"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--android:text="Button Screen"/>-->
+
+
+
+
+
+
+
+
+
+
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -15,7 +15,7 @@ import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
 @Table(database = AppDatabase.class,
         inheritedPrimaryKeys = {@InheritedPrimaryKey(column = @Column, primaryKey = @PrimaryKey,
                 fieldName = "Id")}, inheritedColumns = {@InheritedColumn(column = @Column,
-        fieldName = "Name"),@InheritedColumn(column = @Column,
+        fieldName = "Name"), @InheritedColumn(column = @Column,
         fieldName = "Time")})
 public class TaskDetail extends Task {
 

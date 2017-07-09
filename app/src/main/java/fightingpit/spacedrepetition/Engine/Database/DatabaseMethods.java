@@ -13,6 +13,7 @@ import fightingpit.spacedrepetition.Engine.CommonUtils;
 import fightingpit.spacedrepetition.Model.RepetitionPattern;
 import fightingpit.spacedrepetition.Model.RepetitionPatternSpace;
 import fightingpit.spacedrepetition.Model.RepetitionPatternSpace_Table;
+import fightingpit.spacedrepetition.Model.RepetitionPattern_Table;
 import fightingpit.spacedrepetition.Model.Task;
 import fightingpit.spacedrepetition.Model.TaskDetail;
 import fightingpit.spacedrepetition.Model.TaskDetail_Table;
@@ -38,28 +39,35 @@ public class DatabaseMethods {
      */
     public static void addRepetitionPattern(String iName, ArrayList<Integer> iRepetitionSpaces) {
 
-        // TODO: Check for name in existing patterns
-        String aPatternId = CommonUtils.generateId();
+        if (getRepetitionPatternFromName(iName) != null) {
+            Log.d(TAG, "++++ Pattern exists in DB.");
+        } else {
 
-        RepetitionPattern aRepetitionPattern = new RepetitionPattern(aPatternId, iName,
-                iRepetitionSpaces.size());
-        aRepetitionPattern.save();
+            Log.d(TAG, "++++ New Pattern does not exists in DB.");
+            String aPatternId = CommonUtils.generateId();
 
-        List<RepetitionPatternSpace> aRepetitionPatternSpaceList = new ArrayList<>();
-        for (int i = 1; i <= iRepetitionSpaces.size(); ++i) {
-            Integer aSpaceValue = iRepetitionSpaces.get(i - 1);
-            if (i > 1) {
-                aSpaceValue -= iRepetitionSpaces.get(i - 2);
+            RepetitionPattern aRepetitionPattern = new RepetitionPattern(aPatternId, iName,
+                    iRepetitionSpaces.size());
+            aRepetitionPattern.save();
+
+            List<RepetitionPatternSpace> aRepetitionPatternSpaceList = new ArrayList<>();
+            for (int i = 1; i <= iRepetitionSpaces.size(); ++i) {
+                Integer aSpaceValue = iRepetitionSpaces.get(i - 1);
+                if (i > 1) {
+                    aSpaceValue -= iRepetitionSpaces.get(i - 2);
+                }
+                aRepetitionPatternSpaceList.add(new RepetitionPatternSpace(aPatternId, i,
+                        aSpaceValue));
+
             }
-            aRepetitionPatternSpaceList.add(new RepetitionPatternSpace(aPatternId, i, aSpaceValue));
+            FastStoreModelTransaction<RepetitionPatternSpace> aFastTransaction =
+                    FastStoreModelTransaction
+                            .insertBuilder(FlowManager
+                                    .getModelAdapter
+                                            (RepetitionPatternSpace.class)).addAll
+                            (aRepetitionPatternSpaceList).build();
+            FlowManager.getDatabase(AppDatabase.class).executeTransaction(aFastTransaction);
         }
-        FastStoreModelTransaction<RepetitionPatternSpace> aFastTransaction =
-                FastStoreModelTransaction
-                        .insertBuilder(FlowManager
-                                .getModelAdapter
-                                        (RepetitionPatternSpace.class)).addAll
-                        (aRepetitionPatternSpaceList).build();
-        FlowManager.getDatabase(AppDatabase.class).executeTransaction(aFastTransaction);
     }
 
     public static void addTask(String iName, String iComment, String iPatternId) {
@@ -88,6 +96,15 @@ public class DatabaseMethods {
         aTask.save();
     }
 
+    public static RepetitionPattern getRepetitionPatternFromId(String iPatternId) {
+        return SQLite.select().from(RepetitionPattern.class).where(RepetitionPattern_Table.Id.eq
+                (iPatternId)).querySingle();
+    }
+
+    public static RepetitionPattern getRepetitionPatternFromName(String iPatternName) {
+        return SQLite.select().from(RepetitionPattern.class).where(RepetitionPattern_Table.Name
+                .eq(iPatternName)).querySingle();
+    }
 
     /**
      * Get all RepetitionPatterns from DB.
@@ -184,7 +201,7 @@ public class DatabaseMethods {
     public static void printPatterns() {
 
         List<RepetitionPattern> aRepetitionPatterns = getAllRepetitionPattern();
-        Log.d(TAG, "aRepetitionPatterns Size:" + aRepetitionPatterns.size());
+        //Log.d(TAG, "aRepetitionPatterns Size:" + aRepetitionPatterns.size());
         for (RepetitionPattern r : aRepetitionPatterns) {
             Log.d(TAG, "Pattern:" + r.toString());
             List<RepetitionPatternSpace> aRepetitionPatternSpaces = getRepetitionPatternSpace(r

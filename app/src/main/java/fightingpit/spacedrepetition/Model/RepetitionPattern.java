@@ -12,7 +12,7 @@ import fightingpit.spacedrepetition.Engine.Database.AppDatabase;
  */
 
 @Table(database = AppDatabase.class)
-public class RepetitionPattern extends BaseModel{
+public class RepetitionPattern extends BaseModel {
 
     @PrimaryKey
     private String Id;

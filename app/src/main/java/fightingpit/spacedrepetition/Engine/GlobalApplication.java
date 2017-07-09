@@ -2,8 +2,6 @@ package fightingpit.spacedrepetition.Engine;
 
 import android.app.Application;
 
-import com.raizlabs.android.dbflow.config.FlowConfig;
-import com.raizlabs.android.dbflow.config.FlowLog;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 /**
@@ -17,7 +15,7 @@ public class GlobalApplication extends Application {
         // This instantiates DBFlow
         FlowManager.init(this);
         // add for verbose logging
-        FlowLog.setMinimumLoggingLevel(FlowLog.Level.V);
+        //        FlowLog.setMinimumLoggingLevel(FlowLog.Level.V);
     }
 
 
