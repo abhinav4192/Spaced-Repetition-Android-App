@@ -70,30 +70,23 @@ public class DatabaseMethods {
         }
     }
 
-    public static void addTask(String iName, String iComment, String iPatternId) {
-        // TODO: Check for error cases. Like warning for existing name.
+    public static void addTask(String iName, String iComment, String iPatternId, String iTime) {
 
         TaskDetail aTaskDetail = new TaskDetail();
         aTaskDetail.setId(CommonUtils.generateId());
         aTaskDetail.setName(iName);
         aTaskDetail.setComment(iComment);
         aTaskDetail.setPatternID(iPatternId);
-        aTaskDetail.setCurrentRepetition(0);
+        aTaskDetail.setCurrentRepetition(1);
         aTaskDetail.save();
-
-        for (RepetitionPatternSpace aRepetitionPatternSpace : SQLite.select().from
-                (RepetitionPatternSpace
-                        .class).where(RepetitionPatternSpace_Table.Id.eq(aTaskDetail.getPatternID
-                ()))
-                .queryList
-                        ()) {
-            if (aRepetitionPatternSpace.getRepetitionNumber() == 1) {
-                aTaskDetail.setTime(CommonUtils.getOffsetTimeInMillis(null, aRepetitionPatternSpace
-                        .getSpace()));
-            }
-        }
+        aTaskDetail.setTime(iTime);
         Task aTask = new Task(aTaskDetail.getId(), aTaskDetail.getName(), aTaskDetail.getTime());
         aTask.save();
+    }
+
+    public static void deleteTask(String iTaskId) {
+        SQLite.delete().from(Task.class).where(TaskDetail_Table.Id.eq(iTaskId)).query();
+        SQLite.delete().from(TaskDetail.class).where(TaskDetail_Table.Id.eq(iTaskId)).query();
     }
 
     public static RepetitionPattern getRepetitionPatternFromId(String iPatternId) {
@@ -130,6 +123,27 @@ public class DatabaseMethods {
         return aRepetitionPatternSpaces;
     }
 
+    public static RepetitionPatternSpace getRepetitionPatternSpace(String iPatternId,
+                                                                   Integer iRepNumber) {
+
+        return SQLite.select().from
+                (RepetitionPatternSpace.class).where(RepetitionPatternSpace_Table.Id
+                .eq(iPatternId), RepetitionPatternSpace_Table.RepetitionNumber.eq(iRepNumber))
+                .querySingle();
+    }
+
+    //    /**
+    //     * Get Task Details from DB.
+    //     *
+    //     * @param iTaskId If not null, get Task Details for iTaskId. If null, get task details
+    // for all
+    //     *                tasks.
+    //     * @return ArrayList of Task Details.
+    //     */
+    public static List<TaskDetail> getTaskDetails() {
+        return SQLite.select().from(TaskDetail.class).queryList();
+    }
+
     /**
      * Get Task Details from DB.
      *
@@ -137,16 +151,9 @@ public class DatabaseMethods {
      *                tasks.
      * @return ArrayList of Task Details.
      */
-    public static List<TaskDetail> getTaskDetails(String iTaskId) {
-        List<TaskDetail> aTaskDetails;
-
-        if (iTaskId == null) {
-            aTaskDetails = SQLite.select().from(TaskDetail.class).queryList();
-        } else {
-            aTaskDetails = SQLite.select().from(TaskDetail.class).where(TaskDetail_Table.Id.eq
-                    (iTaskId)).queryList();
-        }
-        return aTaskDetails;
+    public static TaskDetail getTaskDetailByID(String iTaskId) {
+        return SQLite.select().from(TaskDetail.class).where(TaskDetail_Table.Id.eq
+                (iTaskId)).querySingle();
     }
 
     /**
@@ -217,7 +224,7 @@ public class DatabaseMethods {
      * Test Utility
      */
     public static void printTaskDetails() {
-        for (TaskDetail td : getTaskDetails(null)) {
+        for (TaskDetail td : getTaskDetails()) {
             if (td.getComment() == null)
                 Log.d(TAG, "Task Details:" + "Comment is null");
             Log.d(TAG, "Task Details:" + td.toString());

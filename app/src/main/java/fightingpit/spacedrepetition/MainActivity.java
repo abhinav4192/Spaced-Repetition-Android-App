@@ -1,8 +1,11 @@
 package fightingpit.spacedrepetition;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -19,7 +23,9 @@ import fightingpit.spacedrepetition.Engine.ContextManager;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int ADD_TASK_ACTIVITY = 101;
     int mNavigationSelectedId = R.id.this_week;
+    Toolbar mToolbar;
     @BindString(R.string.fragment_switch_key) String FRAGMENT_KEY;
 
     @Override
@@ -29,21 +35,25 @@ public class MainActivity extends AppCompatActivity
         ContextManager.setCurrentActivityContext(this);
         ButterKnife.bind(this);
         //((GlobalApplication) getApplicationContext()).init();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //        fab.setOnClickListener(new View.OnClickListener() {
-        //            @Override
-        //            public void onClick(View view) {
-        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //                        .setAction("Action", null).show();
-        //            }
-        //        });
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                                .setAction("Action", null).show();
+                        Intent i = new Intent(ContextManager.getCurrentActivityContext(),
+                                AddTaskActivity.class);
+                        startActivityForResult(i,ADD_TASK_ACTIVITY);
+
+                    }
+                });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -63,6 +73,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ContextManager.setCurrentActivityContext(this);
     }
 
     @Override
@@ -111,14 +127,23 @@ public class MainActivity extends AppCompatActivity
     public void updateNavigationView(int id, boolean forceUpdate) {
         if (forceUpdate || id != mNavigationSelectedId) {
 
-            if (id == R.id.this_week) {
-                Fragment aFragment = new AllTaskFragment();
+            if( id == R.id.today_tasks){
+                //mToolbar.setTitle("Today");
+                Fragment aFragment = new ScheduledTaskFragment();
+                Bundle aBundle = new Bundle();
+                aBundle.putInt(FRAGMENT_KEY,1);
+                aFragment.setArguments(aBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
+            } else if (id == R.id.this_week) {
+                //mToolbar.setTitle("Week");
+                Fragment aFragment = new ScheduledTaskFragment();
                 Bundle aBundle = new Bundle();
                 aBundle.putInt(FRAGMENT_KEY,2);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
             } else if (id == R.id.all_tasks) {
-                Fragment aFragment = new AllTaskFragment();
+                //mToolbar.setTitle("All");
+                Fragment aFragment = new ScheduledTaskFragment();
                 Bundle aBundle = new Bundle();
                 aBundle.putInt(FRAGMENT_KEY,3);
                 aFragment.setArguments(aBundle);
@@ -131,6 +156,18 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.nav_send) {
 
             }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ContextManager.setCurrentActivityContext(this);
+
+        switch (requestCode) {
+            case ADD_TASK_ACTIVITY:
+                updateNavigationView(mNavigationSelectedId, true);
+                break;
+            default:
+                break;
         }
     }
 

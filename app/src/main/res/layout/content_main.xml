@@ -15,6 +15,7 @@
         android:layout_height="0dp"
         android:id="@+id/fl_cm"
         android:layout_weight="1"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -22,14 +23,27 @@
         android:id="@+id/ll_cm"
         android:visibility="gone">
         <TextView
+            android:layout_margin="4dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Add"/>
+            android:gravity="center"
+            android:textSize="16sp"
+            android:height="4dp"
+            android:textStyle="bold"
+            android:background="@color/colorAccent"
+            android:id="@+id/tv_cm_done"
+            android:text="Done"/>
         <TextView
+            android:layout_margin="4dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:height="4dp"
+            android:textStyle="bold"
+            android:background="@color/colorAccent"
             android:id="@+id/tv_cm_remove"
             android:text="Remove"/>
     </LinearLayout>
