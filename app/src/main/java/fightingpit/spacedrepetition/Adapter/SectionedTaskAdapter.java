@@ -1,21 +1,26 @@
 package fightingpit.spacedrepetition.Adapter;
 
+import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fightingpit.spacedrepetition.AllTaskFragment;
 import fightingpit.spacedrepetition.Engine.CommonUtils;
 import fightingpit.spacedrepetition.Model.Task;
 import fightingpit.spacedrepetition.R;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
 /**
@@ -24,20 +29,43 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 public class SectionedTaskAdapter extends StatelessSection {
 
     String mTitle;
-    List<Task> mList;
+    public List<Task> mList;
 
+    SectionedRecyclerViewAdapter mRecyclerView;
     Drawable mItemDrawable;
-    TreeSet<String> aSelectedItems = new TreeSet<>();
+    //private TreeSet<Integer> mSelectedItems = new TreeSet<>(Collections.reverseOrder());
+    AllTaskFragment mFragment;
 
 
-    public SectionedTaskAdapter(String title, List<Task> list) {
+    public SectionedTaskAdapter(Fragment fragment,SectionedRecyclerViewAdapter recyclerView,
+                                String title,
+                                List<Task> list) {
 
         super(new SectionParameters.Builder(R.layout.sectioned_task_item)
                 .headerResourceId(R.layout.sectioned_task_header)
                 .build());
         mTitle = title;
         mList = list;
+        mRecyclerView = recyclerView;
+        mFragment = (AllTaskFragment) fragment;
     }
+
+    public List<Task> getItemList(){
+        return mList;
+    }
+
+//    private void deleteitems()
+//    {
+//        ((AllTaskFragment) mFragment).getActivity();
+//        for(Integer aPosition : mSelectedItems){
+//            Log.d("++rem++:" , aPosition.toString());
+//            mList.remove(aPosition.intValue());
+//        }
+//        mSelectedItems.clear();
+//        mRecyclerView.notifyDataSetChanged();
+//
+//    }
+
 
     @Override
     public int getContentItemsTotal() {
@@ -50,19 +78,22 @@ public class SectionedTaskAdapter extends StatelessSection {
     }
 
     @Override
-    public void onBindItemViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindItemViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         final ItemViewHolder itemHolder = (ItemViewHolder) holder;
 
 
         final String aItemName = mList.get(position).getName();
-        final String aItemId = mList.get(position).getId();
+        //final String aItemId = mList.get(position).getId();
         final String aItemDate = CommonUtils.getDateFromMillis(mList.get(position).getTime());
+
+
 
         itemHolder.mItemName.setText(aItemName);
         itemHolder.mItemName.setSelected(false);
         itemHolder.mItemDate.setText(aItemDate);
 
-        if (aSelectedItems.contains(aItemId)) {
+        if (mFragment.isItemSelected(mTitle,position)) {
+
             itemHolder.mItemLayout.setBackgroundColor(Color.parseColor("#FFCCBC"));
         } else {
             itemHolder.mItemLayout.setBackground(mItemDrawable);
@@ -71,11 +102,11 @@ public class SectionedTaskAdapter extends StatelessSection {
         itemHolder.mItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (aSelectedItems.contains(aItemId)) {
-                    aSelectedItems.remove(aItemId);
+                if (mFragment.isItemSelected(mTitle,position)){
+                    mFragment.removeSelectedItem(mTitle,position);
                     itemHolder.mItemLayout.setBackground(mItemDrawable);
                 } else {
-                    aSelectedItems.add(aItemId);
+                    mFragment.addSelectedItem(mTitle,position);
                     itemHolder.mItemLayout.setBackgroundColor(Color.parseColor("#FFCCBC"));
                 }
             }
@@ -108,6 +139,8 @@ public class SectionedTaskAdapter extends StatelessSection {
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
+
+
 
         @BindView(R.id.tv_sti)
         TextView mItemName;

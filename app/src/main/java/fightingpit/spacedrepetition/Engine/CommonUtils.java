@@ -166,7 +166,7 @@ public class CommonUtils {
             DatabaseMethods.addRepetitionPattern("Random", q);
             //DatabaseMethods.printPatterns();
 
-            for (Integer i = 500; i < 1000; ++i) {
+            for (Integer i = 5; i < 10; ++i) {
                 DatabaseMethods.addTask("Abhinav " + i.toString(), null, SQLite.select().from
                         (RepetitionPattern
                                 .class).queryList().get(1).getId());
@@ -175,7 +175,7 @@ public class CommonUtils {
                 //                        .class).queryList().get(1).getId());
             }
 
-            for (Integer i = 0; i < 500; ++i) {
+            for (Integer i = 1; i < 5; ++i) {
                 DatabaseMethods.addTask("Garg " + i.toString(), null, SQLite.select().from
                         (RepetitionPattern
                                 .class).queryList().get(0).getId());

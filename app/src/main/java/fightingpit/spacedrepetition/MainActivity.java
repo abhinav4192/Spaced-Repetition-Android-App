@@ -1,5 +1,6 @@
 package fightingpit.spacedrepetition;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import butterknife.BindString;
+import butterknife.ButterKnife;
 import fightingpit.spacedrepetition.Engine.CommonUtils;
 import fightingpit.spacedrepetition.Engine.ContextManager;
 
@@ -17,12 +20,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     int mNavigationSelectedId = R.id.this_week;
+    @BindString(R.string.fragment_switch_key) String FRAGMENT_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ContextManager.setCurrentActivityContext(this);
+        ButterKnife.bind(this);
         //((GlobalApplication) getApplicationContext()).init();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,15 +112,17 @@ public class MainActivity extends AppCompatActivity
         if (forceUpdate || id != mNavigationSelectedId) {
 
             if (id == R.id.this_week) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fl_cm, new ThisWeekFragment())
-                        .commit();
+                Fragment aFragment = new AllTaskFragment();
+                Bundle aBundle = new Bundle();
+                aBundle.putInt(FRAGMENT_KEY,2);
+                aFragment.setArguments(aBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
             } else if (id == R.id.all_tasks) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fl_cm, new AllTaskFragment())
-                        .commit();
+                Fragment aFragment = new AllTaskFragment();
+                Bundle aBundle = new Bundle();
+                aBundle.putInt(FRAGMENT_KEY,3);
+                aFragment.setArguments(aBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
 
             } else if (id == R.id.nav_manage) {
 
