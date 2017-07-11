@@ -17,6 +17,7 @@ After last repetition task will be removed from list.
 2. ###### Partially Implemented
   * Add patterns with custom repetition intervals. UI Pending.
 3. ###### Planned
+  * Reminder/Daily Notification
   * Reschedule tasks
   * Tags/Labels feature
   * Search feature
@@ -28,6 +29,7 @@ After last repetition task will be removed from list.
   * Learning/completion percentage stats/graphs
   * Login feature
   * Data backup to local/remote
+  * Better UI
 
 ##### Note
 Lots of potential bugs. Input text Validation missing. UI to be fixed. Dummy buttons/ stubs present. Missing error handling/logging. Incomplete documentation. Missing icons.

@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
+
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import fightingpit.spacedrepetition.Engine.CommonUtils;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         CommonUtils.testImplementation();
 
         updateNavigationView(mNavigationSelectedId, true);
+
     }
 
     @Override
