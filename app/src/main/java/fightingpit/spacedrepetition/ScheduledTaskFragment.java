@@ -6,12 +6,14 @@ import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +37,7 @@ import fightingpit.spacedrepetition.Adapter.SectionedTaskAdapter;
 import fightingpit.spacedrepetition.Engine.CommonUtils;
 import fightingpit.spacedrepetition.Engine.ContextManager;
 import fightingpit.spacedrepetition.Engine.Database.DatabaseMethods;
+import fightingpit.spacedrepetition.Engine.SettingManager;
 import fightingpit.spacedrepetition.Model.RepetitionPattern;
 import fightingpit.spacedrepetition.Model.Task;
 import fightingpit.spacedrepetition.Model.TaskDetail;
@@ -48,17 +52,23 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 public class ScheduledTaskFragment extends Fragment {
 
 
-    private final String OVERDUE = "Overdue";
-    private final String UPCOMING = "Upcoming";
-    private final String TODAY = "Today";
-    private final String TOMORROW = "Tomorrow";
+    @BindString(R.string.Overdue)
+    String OVERDUE;
+    @BindString(R.string.Upcoming)
+    String UPCOMING;
+    @BindString(R.string.Today)
+    String TODAY;
+    @BindString(R.string.Tomorrow)
+    String TOMORROW;
     @BindView(R.id.rv_fat)
     RecyclerView mRecyclerView;
     @BindString(R.string.fragment_switch_key)
     String FRAGMENT_KEY;
     private LinearLayout mButtonsLayout;
+    private FloatingActionButton mAddTaskButton;
     private TextView mRemoveButton;
     private TextView mDoneButton;
+    private TextView mRescheduleButton;
     private Fragment mFragment;
     private Integer mFragmentCode;
     private HashMap<String, SectionedTaskAdapter> mAdapterMap = new HashMap<>();
@@ -66,6 +76,7 @@ public class ScheduledTaskFragment extends Fragment {
     private Integer mCountItemsSelected = 0;
     private SectionedRecyclerViewAdapter mSectionedRecyclerViewAdapter;
     private Unbinder mUnbinder;
+    private String mRescheduleTime;
 
 
     public ScheduledTaskFragment() {
@@ -95,12 +106,15 @@ public class ScheduledTaskFragment extends Fragment {
     }
 
     private void initialize() {
+        mAddTaskButton = (FloatingActionButton) ((Activity) ContextManager
+                .getCurrentActivityContext())
+                .findViewById(R.id.fab);
+
         mButtonsLayout = (LinearLayout) ((Activity) ContextManager.getCurrentActivityContext())
-                .findViewById(R
-                        .id.ll_cm);
+                .findViewById(R.id.ll_cm);
+
         mRemoveButton = (TextView) ((Activity) ContextManager.getCurrentActivityContext())
-                .findViewById(R
-                        .id.tv_cm_remove);
+                .findViewById(R.id.tv_cm_remove);
         mRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,18 +123,30 @@ public class ScheduledTaskFragment extends Fragment {
         });
 
         mDoneButton = (TextView) ((Activity) ContextManager.getCurrentActivityContext())
-                .findViewById(R
-                        .id.tv_cm_done);
+                .findViewById(R.id.tv_cm_done);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //doneButtonAction();
-                new updateTasks().execute();
+                if (mCountItemsSelected > 0) {
+                    new updateTasks().execute();
+                }
             }
         });
+
+        mRescheduleButton = (TextView) ((Activity) ContextManager.getCurrentActivityContext())
+                .findViewById(R.id.tv_cm_reschedule);
+        mRescheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCountItemsSelected > 0) {
+                    rescheduleButtonAction();
+                }
+            }
+        });
+
     }
 
-    private void setUpView(){
+    private void setUpView() {
         mSectionedRecyclerViewAdapter.removeAllSections();
         mAdapterMap.clear();
         mSelectedItemMap.clear();
@@ -138,13 +164,13 @@ public class ScheduledTaskFragment extends Fragment {
         }
     }
 
-
     public void addSelectedItem(String iTag, Integer iPosition) {
         if (mSelectedItemMap.get(iTag).add(iPosition)) {
             mCountItemsSelected++;
         }
         if (mCountItemsSelected == 1) {
             mButtonsLayout.setVisibility(View.VISIBLE);
+            mAddTaskButton.setVisibility(View.GONE);
         }
     }
 
@@ -154,113 +180,13 @@ public class ScheduledTaskFragment extends Fragment {
         }
         if (mCountItemsSelected == 0) {
             mButtonsLayout.setVisibility(View.GONE);
+            mAddTaskButton.setVisibility(View.VISIBLE);
         }
     }
-
 
     public boolean isItemSelected(String iTag, Integer iPosition) {
         return mSelectedItemMap.get(iTag).contains(iPosition);
     }
-
-    private void deleteButtonAction() {
-        if (mCountItemsSelected > 0) {
-
-            String aContent = "Permanently delete " + mCountItemsSelected.toString();
-            if(mCountItemsSelected == 1){
-                aContent+= " task";
-            }else
-            aContent += " tasks";
-
-            new MaterialDialog.Builder(ContextManager.getCurrentActivityContext())
-                    .content(aContent)
-                    .positiveText("CONFIRM")
-                    .negativeText("CANCEL")
-                    .onAny(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if(which== DialogAction.POSITIVE){
-                                List<String> aTaskIdList = new ArrayList<>();
-                                for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry : mSelectedItemMap.entrySet()) {
-                                    String aKey = aMapEntry.getKey();
-                                    List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
-                                    for (Integer aPosition : aMapEntry.getValue()) {
-                                        aTaskIdList.add(aTasks.get(aPosition).getId());
-                                        aTasks.remove(aPosition.intValue());
-                                    }
-                                    if (aTasks.size() <= 0) {
-                                        mSectionedRecyclerViewAdapter.removeSection(aKey);
-                                    }
-                                    aMapEntry.getValue().clear();
-                                }
-                                mCountItemsSelected = 0;
-                                mSectionedRecyclerViewAdapter.notifyDataSetChanged();
-                                mButtonsLayout.setVisibility(View.GONE);
-                                new deleteTasks().execute(aTaskIdList);
-                            } else if(which == DialogAction.NEGATIVE){
-                                Toast.makeText(ContextManager.getCurrentActivityContext(),"Delete" +
-                                        " Canceled",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    })
-                    .show();
-        }
-    }
-
-//    private void doneButtonAction(){
-//        // TODO: Update List Instantaneously
-//
-//        if (mCountItemsSelected > 0) {
-//            List<Task> aTaskList = new ArrayList<>();
-//            for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry : mSelectedItemMap.entrySet()) {
-//                String aKey = aMapEntry.getKey();
-//                List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
-//                for (Integer aPosition : aMapEntry.getValue()) {
-//                    aTaskList.add(aTasks.get(aPosition));
-//                    aTasks.remove(aPosition.intValue());
-//                }
-//                if (aTasks.size() <= 0) {
-//                    mSectionedRecyclerViewAdapter.removeSection(aKey);
-//                }
-//                aMapEntry.getValue().clear();
-//            }
-//            mCountItemsSelected = 0;
-//            mSectionedRecyclerViewAdapter.notifyDataSetChanged();
-//            mButtonsLayout.setVisibility(View.GONE);
-////            new deleteTasks().execute(aTaskIdList);
-//
-//            HashMap<String,Integer> aPatternIDMaxRepMap = new HashMap<>();
-//            for(Task aTask: aTaskList){
-//                TaskDetail aTaskDetail = DatabaseMethods.getTaskDetailByID(aTask.getId());
-//                Integer aRepetitionMax = -1;
-//
-//                if(!aPatternIDMaxRepMap.containsKey(aTaskDetail.getPatternID())){
-//                    RepetitionPattern aRepetitionPattern = DatabaseMethods
-//                            .getRepetitionPatternFromId(aTaskDetail.getPatternID());
-//                    aRepetitionMax = aRepetitionPattern
-//                            .getRepetitions();
-//                    aPatternIDMaxRepMap.put(aRepetitionPattern.getId(),aRepetitionMax);
-//                }
-//                else{
-//                    aRepetitionMax = aPatternIDMaxRepMap.get(aTaskDetail.getPatternID());
-//                }
-//                if(aTaskDetail.getCurrentRepetition() < aRepetitionMax){
-//                    Integer aNewRepNumber = aTaskDetail.getCurrentRepetition() + 1;
-//                    aTask.setTime(CommonUtils.addDaysToMillis(aTask.getTime(),DatabaseMethods
-//                            .getRepetitionPatternSpace(aTaskDetail
-//                            .getPatternID(),aNewRepNumber).getSpace()));
-//                    DatabaseMethods.updateTask(aTask);
-//                    aTaskDetail.setCurrentRepetition(aNewRepNumber);
-//                    DatabaseMethods.updateTaskDetails(aTaskDetail);
-//
-//                }else{
-//                    DatabaseMethods.deleteTask(aTask.getId());
-//                }
-//
-//            }
-//            setUpView();
-//            mSectionedRecyclerViewAdapter.notifyDataSetChanged();
-//        }
-//    }
 
     private void addOverdueTasks() {
         String aDayStartMillis = CommonUtils.getDayStartMillis(null);
@@ -290,7 +216,7 @@ public class ScheduledTaskFragment extends Fragment {
         }
     }
 
-    private void addTomorrowTasks(){
+    private void addTomorrowTasks() {
         List<Task> aUpcomingTasks = DatabaseMethods.getScheduledTasks(CommonUtils
                 .getOffsetTimeInMillis(null, 1), CommonUtils.getOffsetTimeInMillis(null, 2));
         if (aUpcomingTasks.size() > 0) {
@@ -303,7 +229,7 @@ public class ScheduledTaskFragment extends Fragment {
         }
     }
 
-    private void addSevenDayRemainingTasks(){
+    private void addSevenDayRemainingTasks() {
         TreeMap<String, List<Task>> aTreeMap = new TreeMap<>();
         for (Task aTask : DatabaseMethods.getScheduledTasks(CommonUtils.getOffsetTimeInMillis
                         (null, 2),
@@ -343,10 +269,137 @@ public class ScheduledTaskFragment extends Fragment {
         }
     }
 
-    private void updateUIAfterSetup(){
+    private void updateUIAfterSetup() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(ContextManager
                 .getCurrentActivityContext()));
         mRecyclerView.setAdapter(mSectionedRecyclerViewAdapter);
+    }
+
+    private void deleteButtonAction() {
+        if (mCountItemsSelected > 0) {
+
+            String aContent = "Permanently delete " + mCountItemsSelected.toString();
+            if (mCountItemsSelected == 1) {
+                aContent += " task";
+            } else
+                aContent += " tasks";
+
+            new MaterialDialog.Builder(ContextManager.getCurrentActivityContext())
+                    .content(aContent)
+                    .positiveText("CONFIRM")
+                    .negativeText("CANCEL")
+                    .onAny(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction
+                                which) {
+                            if (which == DialogAction.POSITIVE) {
+                                List<String> aTaskIdList = new ArrayList<>();
+                                for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry :
+                                        mSelectedItemMap.entrySet()) {
+                                    String aKey = aMapEntry.getKey();
+                                    List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
+                                    for (Integer aPosition : aMapEntry.getValue()) {
+                                        aTaskIdList.add(aTasks.get(aPosition).getId());
+                                        aTasks.remove(aPosition.intValue());
+                                    }
+                                    if (aTasks.size() <= 0) {
+                                        mSectionedRecyclerViewAdapter.removeSection(aKey);
+                                    }
+                                    aMapEntry.getValue().clear();
+                                }
+                                mCountItemsSelected = 0;
+                                mSectionedRecyclerViewAdapter.notifyDataSetChanged();
+                                mButtonsLayout.setVisibility(View.GONE);
+                                mAddTaskButton.setVisibility(View.VISIBLE);
+                                new deleteTasks().execute(aTaskIdList);
+                            } else if (which == DialogAction.NEGATIVE) {
+                                Toast.makeText(ContextManager.getCurrentActivityContext(),
+                                        "Delete" +
+                                                " Canceled", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    public void rescheduleButtonAction() {
+
+        String aTimeStamp = CommonUtils.getDayStartMillis(null);
+        final String mMinTimeAllowed = aTimeStamp;
+        Calendar aCalendar = Calendar.getInstance();
+        aCalendar.setTimeInMillis(Long.parseLong(aTimeStamp));
+        aCalendar.add(Calendar.YEAR, 2);
+        Long aMaxTime = aCalendar.getTimeInMillis();
+        final String mMaxTimeAllowed = aMaxTime.toString();
+
+        MaterialDialog dialog = new MaterialDialog.Builder(ContextManager
+                .getCurrentActivityContext())
+                .customView(R.layout.date_picker_layout, true)
+                .positiveText("OK")
+                .negativeText("CANCEL")
+                .onAny(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction
+                            which) {
+                        if (which == DialogAction.POSITIVE) {
+                            DatePicker aDatePicker = (DatePicker) dialog.getCustomView()
+                                    .findViewById(R.id
+                                            .dp_dpl);
+                            String aSelectedMillis = CommonUtils.getMilliseconds(aDatePicker
+                                    .getDayOfMonth(), aDatePicker.getMonth(), aDatePicker.getYear
+                                    ());
+                            if (aSelectedMillis.compareTo(mMinTimeAllowed) < 0) {
+                                mRescheduleTime = mMinTimeAllowed;
+                            } else if (aSelectedMillis.compareTo(mMaxTimeAllowed) > 0) {
+                                mRescheduleTime = mMaxTimeAllowed;
+                            } else {
+                                mRescheduleTime = aSelectedMillis;
+                            }
+
+                            String aContent = "";
+                            if (mCountItemsSelected == 1) {
+                                aContent = "Reschedule " + mCountItemsSelected
+                                        .toString() + " task to " + CommonUtils.getDateFromMillis
+                                        (mRescheduleTime) + " ?";
+                            } else {
+                                aContent = "Reschedule " + mCountItemsSelected
+                                        .toString() + " tasks to " + CommonUtils.getDateFromMillis
+                                        (mRescheduleTime) + " ?";
+                            }
+                            new MaterialDialog.Builder(ContextManager.getCurrentActivityContext())
+                                    .content(aContent)
+                                    .positiveText("CONFIRM")
+                                    .negativeText("CANCEL")
+                                    .onAny(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog,
+                                                            @NonNull DialogAction which) {
+                                            if (which == DialogAction.POSITIVE) {
+                                                new rescheduleTasks().execute();
+                                            } else if (which == DialogAction.NEGATIVE) {
+                                                Toast.makeText(ContextManager
+                                                        .getCurrentActivityContext(), "Reschedule" +
+                                                        " Canceled", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .show();
+                        }
+
+                    }
+                })
+                .show();
+
+        DatePicker aDatePicker = (DatePicker) dialog.getCustomView().findViewById(R.id
+                .dp_dpl);
+        Calendar aCal = Calendar.getInstance();
+        aCal.setTimeInMillis(Long.parseLong(mMinTimeAllowed));
+        aDatePicker.updateDate(aCal.get(Calendar.YEAR), aCal.get(Calendar.MONTH),
+                aCal.get(Calendar.DAY_OF_MONTH));
+        aDatePicker.setMinDate(Long.parseLong(mMinTimeAllowed));
+        aDatePicker.setMaxDate(Long.parseLong(mMaxTimeAllowed));
+
     }
 
     private class SetUpTodayView extends AsyncTask<Void, Void, Void> {
@@ -356,6 +409,7 @@ public class ScheduledTaskFragment extends Fragment {
             addTodayTasks();
             return null;
         }
+
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -400,64 +454,38 @@ public class ScheduledTaskFragment extends Fragment {
         }
     }
 
-    private class deleteTasks extends AsyncTask<List<String>,Void,Void>{
+    private class deleteTasks extends AsyncTask<List<String>, Void, Void> {
         @Override
         protected Void doInBackground(List<String>... lists) {
-            for(String iId:lists[0])
-            {
+            for (String iId : lists[0]) {
                 DatabaseMethods.deleteTask(iId);
             }
             return null;
         }
     }
 
-    private class updateTasks extends AsyncTask<Void,Void,Void>{
+    private class rescheduleTasks extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            if (mCountItemsSelected > 0) {
-                List<Task> aTaskList = new ArrayList<>();
-                for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry : mSelectedItemMap.entrySet()) {
-                    String aKey = aMapEntry.getKey();
-                    List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
-                    for (Integer aPosition : aMapEntry.getValue()) {
-                        aTaskList.add(aTasks.get(aPosition));
-                        aTasks.remove(aPosition.intValue());
-                    }
-                    if (aTasks.size() <= 0) {
-                        mSectionedRecyclerViewAdapter.removeSection(aKey);
-                    }
-                    aMapEntry.getValue().clear();
+
+            List<Task> aTaskList = new ArrayList<>();
+            for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry : mSelectedItemMap.entrySet()) {
+                String aKey = aMapEntry.getKey();
+                List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
+                for (Integer aPosition : aMapEntry.getValue()) {
+                    aTaskList.add(aTasks.get(aPosition));
+                    aTasks.remove(aPosition.intValue());
                 }
-                mCountItemsSelected = 0;
-
-                HashMap<String,Integer> aPatternIDMaxRepMap = new HashMap<>();
-                for(Task aTask: aTaskList){
-                    TaskDetail aTaskDetail = DatabaseMethods.getTaskDetailByID(aTask.getId());
-                    Integer aRepetitionMax = -1;
-
-                    if(!aPatternIDMaxRepMap.containsKey(aTaskDetail.getPatternID())){
-                        RepetitionPattern aRepetitionPattern = DatabaseMethods
-                                .getRepetitionPatternFromId(aTaskDetail.getPatternID());
-                        aRepetitionMax = aRepetitionPattern
-                                .getRepetitions();
-                        aPatternIDMaxRepMap.put(aRepetitionPattern.getId(),aRepetitionMax);
-                    }
-                    else{
-                        aRepetitionMax = aPatternIDMaxRepMap.get(aTaskDetail.getPatternID());
-                    }
-                    if(aTaskDetail.getCurrentRepetition() < aRepetitionMax){
-                        Integer aNewRepNumber = aTaskDetail.getCurrentRepetition() + 1;
-                        aTask.setTime(CommonUtils.addDaysToMillis(aTask.getTime(),DatabaseMethods
-                                .getRepetitionPatternSpace(aTaskDetail
-                                        .getPatternID(),aNewRepNumber).getSpace()));
-                        DatabaseMethods.updateTask(aTask);
-                        aTaskDetail.setCurrentRepetition(aNewRepNumber);
-                        DatabaseMethods.updateTaskDetails(aTaskDetail);
-
-                    }else{
-                        DatabaseMethods.deleteTask(aTask.getId());
-                    }
+                if (aTasks.size() <= 0) {
+                    mSectionedRecyclerViewAdapter.removeSection(aKey);
                 }
+                aMapEntry.getValue().clear();
+            }
+            mCountItemsSelected = 0;
+
+            for (Task aTask : aTaskList) {
+                aTask.setTime(mRescheduleTime);
+                DatabaseMethods.updateTask(aTask);
             }
 
             return null;
@@ -467,10 +495,79 @@ public class ScheduledTaskFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mButtonsLayout.setVisibility(View.GONE);
+            mAddTaskButton.setVisibility(View.VISIBLE);
+            setUpView();
+            mSectionedRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class updateTasks extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            List<Task> aTaskList = new ArrayList<>();
+            for (HashMap.Entry<String, TreeSet<Integer>> aMapEntry : mSelectedItemMap.entrySet()) {
+                String aKey = aMapEntry.getKey();
+                List<Task> aTasks = mAdapterMap.get(aKey).getItemList();
+                for (Integer aPosition : aMapEntry.getValue()) {
+                    aTaskList.add(aTasks.get(aPosition));
+                    aTasks.remove(aPosition.intValue());
+                }
+                if (aTasks.size() <= 0) {
+                    mSectionedRecyclerViewAdapter.removeSection(aKey);
+                }
+                aMapEntry.getValue().clear();
+            }
+            mCountItemsSelected = 0;
+
+            HashMap<String, Integer> aPatternIDMaxRepMap = new HashMap<>();
+            for (Task aTask : aTaskList) {
+                TaskDetail aTaskDetail = DatabaseMethods.getTaskDetailByID(aTask.getId());
+                Integer aRepetitionMax = -1;
+
+                if (!aPatternIDMaxRepMap.containsKey(aTaskDetail.getPatternID())) {
+                    RepetitionPattern aRepetitionPattern = DatabaseMethods
+                            .getRepetitionPatternFromId(aTaskDetail.getPatternID());
+                    aRepetitionMax = aRepetitionPattern
+                            .getRepetitions();
+                    aPatternIDMaxRepMap.put(aRepetitionPattern.getId(), aRepetitionMax);
+                } else {
+                    aRepetitionMax = aPatternIDMaxRepMap.get(aTaskDetail.getPatternID());
+                }
+                if (aTaskDetail.getCurrentRepetition() < aRepetitionMax) {
+                    Integer aNewRepNumber = aTaskDetail.getCurrentRepetition() + 1;
+
+                    if (SettingManager.isTodayBaseDate()) {
+                        aTask.setTime(CommonUtils.getOffsetTimeInMillis(null, DatabaseMethods
+                                .getRepetitionPatternSpace(aTaskDetail
+                                        .getPatternID(), aNewRepNumber).getSpace()));
+                    } else {
+                        aTask.setTime(CommonUtils.addDaysToMillis(aTask.getTime(), DatabaseMethods
+                                .getRepetitionPatternSpace(aTaskDetail
+                                        .getPatternID(), aNewRepNumber).getSpace()));
+                    }
+
+                    DatabaseMethods.updateTask(aTask);
+                    aTaskDetail.setCurrentRepetition(aNewRepNumber);
+                    DatabaseMethods.updateTaskDetails(aTaskDetail);
+
+                } else {
+                    DatabaseMethods.deleteTask(aTask.getId());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mButtonsLayout.setVisibility(View.GONE);
+            mAddTaskButton.setVisibility(View.VISIBLE);
             setUpView();
             mSectionedRecyclerViewAdapter.notifyDataSetChanged();
         }
 
 
     }
+
 }

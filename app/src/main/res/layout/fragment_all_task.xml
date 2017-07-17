@@ -15,25 +15,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <!--<TextView-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_width="100dp"-->
-        <!--android:layout_gravity="center_vertical"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/tv_ftw"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--android:text="Button Screen"/>-->
-
-
-
-
-
-
-
-
-
-
-
     </LinearLayout>
 
 </FrameLayout>

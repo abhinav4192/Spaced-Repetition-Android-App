@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final int ADD_TASK_ACTIVITY = 101;
+    public static final int SETTINGS_ACTIVITY = 102;
     int mNavigationSelectedId = R.id.this_week;
     Toolbar mToolbar;
     @BindString(R.string.fragment_switch_key) String FRAGMENT_KEY;
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent(ContextManager.getCurrentActivityContext(),
+                    SettingsActivity.class);
+            startActivityForResult(i,SETTINGS_ACTIVITY);
             return true;
         }
 
@@ -167,6 +171,9 @@ public class MainActivity extends AppCompatActivity
 
         switch (requestCode) {
             case ADD_TASK_ACTIVITY:
+                updateNavigationView(mNavigationSelectedId, true);
+                break;
+            case SETTINGS_ACTIVITY:
                 updateNavigationView(mNavigationSelectedId, true);
                 break;
             default:

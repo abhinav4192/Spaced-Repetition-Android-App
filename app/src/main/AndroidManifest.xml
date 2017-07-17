@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="fightingpit.spacedrepetition"
           xmlns:tools="http://schemas.android.com/tools"
-        >
+          package="fightingpit.spacedrepetition">
 
     <application
         android:name=".Engine.GlobalApplication"
@@ -22,6 +21,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddTaskActivity">
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings">
         </activity>
     </application>
 
