@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -27,8 +28,10 @@ public class MainActivity extends AppCompatActivity
 
     public static final int ADD_TASK_ACTIVITY = 101;
     public static final int SETTINGS_ACTIVITY = 102;
+    public static final int MANAGE_PATTERNS_ACTIVITY = 103;
     int mNavigationSelectedId = R.id.this_week;
     Toolbar mToolbar;
+    NavigationView mNavigationView;
     @BindString(R.string.fragment_switch_key) String FRAGMENT_KEY;
 
     @Override
@@ -61,11 +64,12 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
         CommonUtils.testImplementation();
 
         updateNavigationView(mNavigationSelectedId, true);
+        mNavigationView.setCheckedItem(mNavigationSelectedId);
 
     }
 
@@ -119,7 +123,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         updateNavigationView(id, false);
-        mNavigationSelectedId = id;
         return true;
     }
 
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity
                 aBundle.putInt(FRAGMENT_KEY,1);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
+                mNavigationSelectedId = id;
             } else if (id == R.id.this_week) {
                 //mToolbar.setTitle("Week");
                 Fragment aFragment = new ScheduledTaskFragment();
@@ -148,6 +152,7 @@ public class MainActivity extends AppCompatActivity
                 aBundle.putInt(FRAGMENT_KEY,2);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
+                mNavigationSelectedId = id;
             } else if (id == R.id.all_tasks) {
                 //mToolbar.setTitle("All");
                 Fragment aFragment = new ScheduledTaskFragment();
@@ -155,9 +160,13 @@ public class MainActivity extends AppCompatActivity
                 aBundle.putInt(FRAGMENT_KEY,3);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
+                mNavigationSelectedId = id;
 
-            } else if (id == R.id.nav_manage) {
+            } else if (id == R.id.manage_patterns) {
 
+                Intent i = new Intent(ContextManager.getCurrentActivityContext(),
+                        ManagePatternsActivity.class);
+                startActivityForResult(i,MANAGE_PATTERNS_ACTIVITY);
             } else if (id == R.id.nav_share) {
 
             } else if (id == R.id.nav_send) {
@@ -175,6 +184,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case SETTINGS_ACTIVITY:
                 updateNavigationView(mNavigationSelectedId, true);
+                break;
+            case MANAGE_PATTERNS_ACTIVITY:
+                mNavigationView.setCheckedItem(mNavigationSelectedId);
                 break;
             default:
                 break;

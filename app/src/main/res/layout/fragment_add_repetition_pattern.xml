@@ -1,0 +1,89 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="fightingpit.spacedrepetition.AddRepetitionPatternFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="Pattern"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et_pattern_name_farp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:gravity="center_vertical"
+            android:hint="Pattern Name"
+            android:imeOptions="actionDone"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            app:met_autoValidate="true"
+            app:met_errorColor="@color/colorAccent"
+            app:met_primaryColor="@color/colorPrimary"
+            app:met_singleLineEllipsis="true"
+            app:met_textColor="@color/black75"/>
+
+        <LinearLayout
+            android:id="@+id/ll_pattern_selector_farp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="Repetition Pattern"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_adt_start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="Select a repetition pattern."
+                android:textColor="@color/black75"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_add_pattern_farp"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorPrimary"
+            android:text="Add Pattern"
+            android:textColor="#EEEEEE"/>
+
+    </LinearLayout>
+
+</FrameLayout>
