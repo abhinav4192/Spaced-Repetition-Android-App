@@ -12,20 +12,20 @@ After last repetition task will be removed from list.
 ##### SPARR Features
 1. ###### Implemented
   * Add tasks. Mark task as completed to update the task date to next repetition date
-  * Delete tasks
+  * Delete tasks. Reschedule tasks
   * Show today's, week's tasks, and all tasks
+  * Add Repetition Patterns. Rename them. Delete them.
+
 2. ###### Partially Implemented
-  * Add patterns with custom repetition intervals. UI Pending.
+  * Settings
 3. ###### Planned
   * Reminder/Daily Notification
-  * Reschedule tasks
   * Tags/Labels feature
   * Search feature
-  * Settings
   * Task history
   * Google analytics
   * Push notification
-4. ###### Wished
+4. ###### Wish List
   * Learning/completion percentage stats/graphs
   * Login feature
   * Data backup to local/remote

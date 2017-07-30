@@ -1,0 +1,95 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:paddingTop="@dimen/activity_vertical_margin"
+             tools:context="fightingpit.spacedrepetition.EditRepetitionPatternFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:id="@+id/tv_pattern_text_ferp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="Pattern"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/et_pattern_name_ferp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_pattern_text_ferp"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_vertical"
+                android:hint="Pattern Name"
+                android:imeOptions="actionDone"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:singleLine="true"
+                app:met_autoValidate="true"
+                app:met_errorColor="@color/colorAccent"
+                app:met_primaryColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_textColor="@color/black75"/>
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottom_button_size"
+            android:layout_alignParentBottom="true"
+            android:background="@color/bottom_button_background"
+            android:clickable="false"/>
+
+        <ImageView
+            android:id="@+id/iv_delete_ferp"
+            android:layout_width="@dimen/bottom_button_size"
+            android:layout_height="@dimen/bottom_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="8dp"
+            android:padding="@dimen/bottom_button_padding"
+            android:src="@drawable/ic_delete"/>
+
+        <ImageView
+            android:id="@+id/iv_done_ferp"
+            android:layout_width="@dimen/bottom_button_size"
+            android:layout_height="@dimen/bottom_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:padding="@dimen/bottom_button_padding"
+            android:src="@drawable/ic_check"/>
+
+        <ImageView
+            android:id="@+id/iv_close_ferp"
+            android:layout_width="@dimen/bottom_button_size"
+            android:layout_height="@dimen/bottom_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/bottom_button_margin"
+            android:layout_toLeftOf="@id/iv_done_ferp"
+            android:padding="@dimen/bottom_button_padding"
+            android:src="@drawable/ic_close"/>
+
+
+    </RelativeLayout>
+</FrameLayout>

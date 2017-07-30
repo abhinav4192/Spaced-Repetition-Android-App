@@ -197,50 +197,6 @@ public class CommonUtils {
             p.add(10);
             p.add(20);
             DatabaseMethods.addRepetitionPattern("Default", p);
-
-            ArrayList<Integer> q = new ArrayList<>();
-            q.add(5);
-            q.add(10);
-            q.add(12);
-            q.add(18);
-            DatabaseMethods.addRepetitionPattern("Random", q);
-
-//
-//            //DatabaseMethods.printPatterns();
-//
-//            for (Integer i = 5; i < 10; ++i) {
-//                DatabaseMethods.addTask("Abhinav " + i.toString(), null, SQLite.select().from
-//                        (RepetitionPattern
-//                                .class).queryList().get(1).getId(),null);
-//                //                DatabaseMethods.addTask("Abhinav 2", null, SQLite.select().from
-//                // (RepetitionPattern
-//                //                        .class).queryList().get(1).getId());
-//            }
-//
-//            for (Integer i = 1; i < 5; ++i) {
-//                DatabaseMethods.addTask("Garg " + i.toString(), null, SQLite.select().from
-//                        (RepetitionPattern
-//                                .class).queryList().get(0).getId(),null);
-//                //                DatabaseMethods.addTask("Cat", null, SQLite.select().from
-//                // (RepetitionPattern
-//                //                        .class).queryList().get(0).getId());
-//            }
-//
-//            for (Integer i = 1; i < 5; ++i) {
-//                DatabaseMethods.addTask("Today " + i.toString(), null, SQLite.select().from
-//                        (RepetitionPattern
-//                                .class).queryList().get(2).getId(),null);
-//                //                DatabaseMethods.addTask("Cat", null, SQLite.select().from
-//                // (RepetitionPattern
-//                //                        .class).queryList().get(0).getId());
-//            }
-//
-//            DatabaseMethods.addTask("Garg", null, SQLite.select().from(RepetitionPattern
-//                    .class).queryList().get(0).getId(),null);
-//            DatabaseMethods.addTask("Cat", null, SQLite.select().from(RepetitionPattern
-//                    .class).queryList().get(0).getId(),null);
-//            //DatabaseMethods.printTaskDetails();
-//            //DatabaseMethods.printScheduledTasks();
         }
     }
 }

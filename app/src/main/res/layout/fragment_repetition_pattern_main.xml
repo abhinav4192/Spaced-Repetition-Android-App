@@ -2,16 +2,15 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:paddingBottom="@dimen/activity_vertical_margin"
+             android:paddingLeft="@dimen/activity_horizontal_margin"
+             android:paddingRight="@dimen/activity_horizontal_margin"
+             android:paddingTop="@dimen/activity_vertical_margin"
              tools:context="fightingpit.spacedrepetition.RepetitionPatternMainFragment">
 
-    <Button
-        android:id="@+id/bt_add_pattern_frrm"
+    <ListView
+        android:id="@+id/lv_patter_list_frpm"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorPrimary"
-        android:text="Add Pattern"
-        android:textColor="#EEEEEE"/>
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>

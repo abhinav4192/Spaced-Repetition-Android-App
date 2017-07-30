@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,9 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -32,7 +28,8 @@ public class MainActivity extends AppCompatActivity
     int mNavigationSelectedId = R.id.this_week;
     Toolbar mToolbar;
     NavigationView mNavigationView;
-    @BindString(R.string.fragment_switch_key) String FRAGMENT_KEY;
+    @BindString(R.string.fragment_switch_key)
+    String FRAGMENT_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +41,19 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-//                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                                .setAction("Action", null).show();
-                        Intent i = new Intent(ContextManager.getCurrentActivityContext(),
-                                AddTaskActivity.class);
-                        startActivityForResult(i,ADD_TASK_ACTIVITY);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //                        Snackbar.make(view, "Replace with your own action",
+                // Snackbar.LENGTH_LONG)
+                //                                .setAction("Action", null).show();
+                Intent i = new Intent(ContextManager.getCurrentActivityContext(),
+                        AddTaskActivity.class);
+                startActivityForResult(i, ADD_TASK_ACTIVITY);
 
-                    }
-                });
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             Intent i = new Intent(ContextManager.getCurrentActivityContext(),
                     SettingsActivity.class);
-            startActivityForResult(i,SETTINGS_ACTIVITY);
+            startActivityForResult(i, SETTINGS_ACTIVITY);
             return true;
         }
 
@@ -137,11 +135,11 @@ public class MainActivity extends AppCompatActivity
     public void updateNavigationView(int id, boolean forceUpdate) {
         if (forceUpdate || id != mNavigationSelectedId) {
 
-            if( id == R.id.today_tasks){
+            if (id == R.id.today_tasks) {
                 //mToolbar.setTitle("Today");
                 Fragment aFragment = new ScheduledTaskFragment();
                 Bundle aBundle = new Bundle();
-                aBundle.putInt(FRAGMENT_KEY,1);
+                aBundle.putInt(FRAGMENT_KEY, 1);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
                 mNavigationSelectedId = id;
@@ -149,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                 //mToolbar.setTitle("Week");
                 Fragment aFragment = new ScheduledTaskFragment();
                 Bundle aBundle = new Bundle();
-                aBundle.putInt(FRAGMENT_KEY,2);
+                aBundle.putInt(FRAGMENT_KEY, 2);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
                 mNavigationSelectedId = id;
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                 //mToolbar.setTitle("All");
                 Fragment aFragment = new ScheduledTaskFragment();
                 Bundle aBundle = new Bundle();
-                aBundle.putInt(FRAGMENT_KEY,3);
+                aBundle.putInt(FRAGMENT_KEY, 3);
                 aFragment.setArguments(aBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_cm, aFragment).commit();
                 mNavigationSelectedId = id;
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity
 
                 Intent i = new Intent(ContextManager.getCurrentActivityContext(),
                         ManagePatternsActivity.class);
-                startActivityForResult(i,MANAGE_PATTERNS_ACTIVITY);
+                startActivityForResult(i, MANAGE_PATTERNS_ACTIVITY);
             } else if (id == R.id.nav_share) {
 
             } else if (id == R.id.nav_send) {
@@ -187,6 +185,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case MANAGE_PATTERNS_ACTIVITY:
                 mNavigationView.setCheckedItem(mNavigationSelectedId);
+                updateNavigationView(mNavigationSelectedId, true);
                 break;
             default:
                 break;

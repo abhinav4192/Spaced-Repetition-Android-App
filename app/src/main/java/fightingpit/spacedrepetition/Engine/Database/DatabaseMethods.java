@@ -70,6 +70,21 @@ public class DatabaseMethods {
         }
     }
 
+    public static void deleteRepetitionPattern(String iPatternId) {
+        for (TaskDetail aTaskDetail : getTaskDetailsByPatternId(iPatternId)) {
+            deleteTask(aTaskDetail.getId());
+        }
+        SQLite.delete().from(RepetitionPatternSpace.class).where(RepetitionPatternSpace_Table.Id
+                .eq(iPatternId)).query();
+        SQLite.delete().from(RepetitionPattern.class).where(RepetitionPattern_Table.Id.eq
+                (iPatternId)).query();
+    }
+
+    public static void updateRepetitionPatternNameById(String iPatternId, String iNewName) {
+        SQLite.update(RepetitionPattern.class).set(RepetitionPattern_Table.Name.eq(iNewName))
+                .where(RepetitionPattern_Table.Id.eq(iPatternId)).query();
+    }
+
     public static void addTask(String iName, String iComment, String iPatternId, String iTime) {
 
         TaskDetail aTaskDetail = new TaskDetail();
@@ -132,16 +147,13 @@ public class DatabaseMethods {
                 .querySingle();
     }
 
-    //    /**
-    //     * Get Task Details from DB.
-    //     *
-    //     * @param iTaskId If not null, get Task Details for iTaskId. If null, get task details
-    // for all
-    //     *                tasks.
-    //     * @return ArrayList of Task Details.
-    //     */
     public static List<TaskDetail> getTaskDetails() {
         return SQLite.select().from(TaskDetail.class).queryList();
+    }
+
+    public static List<TaskDetail> getTaskDetailsByPatternId(String iPatternId) {
+        return SQLite.select().from(TaskDetail.class).where(TaskDetail_Table.PatternID.eq
+                (iPatternId)).queryList();
     }
 
     /**
@@ -155,6 +167,7 @@ public class DatabaseMethods {
         return SQLite.select().from(TaskDetail.class).where(TaskDetail_Table.Id.eq
                 (iTaskId)).querySingle();
     }
+
 
     /**
      * Get tasks schedule between provided time.

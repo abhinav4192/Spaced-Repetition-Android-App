@@ -4,6 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+
     <string name="action_settings">Settings</string>
 
 
@@ -20,7 +21,7 @@
     <string name="pref_next_time_ref_today_title">Today as base date</string>
     <string name="pref_next_time_ref_today_summary">Instead of task due date, use today for getting next repetition date</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="AddPatternId">Add_Pattern</string>
 
 </resources>
